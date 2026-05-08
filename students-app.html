@@ -1,0 +1,1778 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#00c8ff">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Ashraf Coaching">
+<link rel="manifest" href="manifest-students.json">
+<title>Ashraf Coaching & Smart Learning</title>
+<style>
+  @font-face {
+    font-family: 'Rajdhani';
+    src: local('Rajdhani'), local('Arial Black'), local('Impact');
+    font-weight: 400 700;
+  }
+  @font-face {
+    font-family: 'Hind Siliguri';
+    src: local('Hind Siliguri'), local('Nirmala UI'), local('Vrinda'), local('Arial');
+    font-weight: 300 700;
+  }
+</style>
+<style>
+  :root {
+    --bg-dark: #050a12;
+    --bg-card: #0d1b2a;
+    --bg-card2: #0a1520;
+    --accent-green: #00ff87;
+    --accent-blue: #00c8ff;
+    --accent-gold: #ffd700;
+    --accent-purple: #b44fff;
+    --accent-red: #ff3b5c;
+    --text-primary: #e8f4ff;
+    --text-muted: #5a7a9a;
+    --border: #1a3050;
+    --glow-green: 0 0 20px rgba(0,255,135,0.4);
+    --glow-blue: 0 0 20px rgba(0,200,255,0.4);
+    --glow-gold: 0 0 20px rgba(255,215,0,0.4);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'Hind Siliguri', sans-serif;
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Animated background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse at 20% 20%, rgba(0,200,255,0.05) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(0,255,135,0.05) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, rgba(180,79,255,0.03) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ===== SCREENS ===== */
+  .screen { display: none; min-height: 100vh; position: relative; z-index: 1; }
+  .screen.active { display: flex; flex-direction: column; animation: fadeIn 0.3s ease; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ===== LOGIN SCREEN ===== */
+  #loginScreen {
+    background: 
+      linear-gradient(135deg, #050a12 0%, #0a1a2e 50%, #050a12 100%);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .login-logo {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .login-logo .badge {
+    width: 90px;
+    height: 90px;
+    background: linear-gradient(135deg, #0d2a4a, #1a4a7a);
+    border: 2px solid var(--accent-blue);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 15px;
+    font-size: 36px;
+    box-shadow: var(--glow-blue), inset 0 0 20px rgba(0,200,255,0.1);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { box-shadow: var(--glow-blue), inset 0 0 20px rgba(0,200,255,0.1); }
+    50% { box-shadow: 0 0 40px rgba(0,200,255,0.6), inset 0 0 30px rgba(0,200,255,0.2); }
+  }
+
+  .login-logo h1 {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--accent-blue);
+    letter-spacing: 1px;
+    text-shadow: var(--glow-blue);
+  }
+
+  .login-logo p { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+  .login-card {
+    background: linear-gradient(135deg, #0d1b2a, #0a1520);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 24px;
+    width: 100%;
+    max-width: 380px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+
+  .login-tabs {
+    display: flex;
+    background: #060e18;
+    border-radius: 10px;
+    padding: 4px;
+    margin-bottom: 24px;
+    border: 1px solid var(--border);
+  }
+
+  .login-tab {
+    flex: 1;
+    padding: 10px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.3s;
+    color: var(--text-muted);
+  }
+
+  .login-tab.active {
+    background: linear-gradient(135deg, var(--accent-blue), #0055aa);
+    color: white;
+    box-shadow: var(--glow-blue);
+  }
+
+  .form-group { margin-bottom: 16px; }
+
+  .form-group label {
+    display: block;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  .form-group input, .form-group select, .form-group textarea {
+    width: 100%;
+    background: #060e18;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    color: var(--text-primary);
+    font-size: 14px;
+    font-family: 'Hind Siliguri', sans-serif;
+    transition: all 0.3s;
+    outline: none;
+  }
+
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 3px rgba(0,200,255,0.1);
+  }
+
+  .form-group select option { background: #0d1b2a; }
+
+  .btn-primary {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #00c8ff, #0066cc);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: 'Rajdhani', sans-serif;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: var(--glow-blue);
+    text-transform: uppercase;
+  }
+
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,200,255,0.5); }
+  .btn-primary:active { transform: translateY(0); }
+
+  .btn-green {
+    background: linear-gradient(135deg, #00ff87, #00aa55);
+    box-shadow: var(--glow-green);
+    color: #050a12;
+  }
+
+  .btn-gold {
+    background: linear-gradient(135deg, #ffd700, #ff8c00);
+    box-shadow: var(--glow-gold);
+    color: #050a12;
+  }
+
+  .btn-red {
+    background: linear-gradient(135deg, #ff3b5c, #cc0022);
+    color: white;
+  }
+
+  .btn-sm {
+    width: auto;
+    padding: 8px 16px;
+    font-size: 12px;
+    border-radius: 8px;
+  }
+
+  /* ===== TOP NAV ===== */
+  .top-nav {
+    background: linear-gradient(180deg, rgba(5,10,18,0.98), rgba(5,10,18,0.9));
+    border-bottom: 1px solid var(--border);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(10px);
+  }
+
+  .nav-back {
+    width: 36px; height: 36px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 18px;
+  }
+
+  .nav-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--accent-blue);
+  }
+
+  .nav-avatar {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--accent-gold), #ff8c00);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    color: #050a12;
+    cursor: pointer;
+  }
+
+  /* ===== HOME DASHBOARD ===== */
+  .home-header {
+    background: linear-gradient(135deg, #0a1520, #0d2040);
+    padding: 20px 16px 24px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .home-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent-green), var(--accent-blue), transparent);
+  }
+
+  .greeting { font-size: 13px; color: var(--text-muted); margin-bottom: 4px; }
+
+  .user-name {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--accent-gold);
+    text-shadow: var(--glow-gold);
+  }
+
+  .stats-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .stat-pill {
+    background: rgba(0,0,0,0.4);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .stat-pill .val {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--accent-green);
+  }
+
+  /* Menu Grid */
+  .menu-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .menu-card {
+    background: linear-gradient(135deg, var(--bg-card), var(--bg-card2));
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px 16px;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+  }
+
+  .menu-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    opacity: 0.8;
+  }
+
+  .menu-card.green::before { background: linear-gradient(90deg, transparent, var(--accent-green), transparent); }
+  .menu-card.blue::before { background: linear-gradient(90deg, transparent, var(--accent-blue), transparent); }
+  .menu-card.gold::before { background: linear-gradient(90deg, transparent, var(--accent-gold), transparent); }
+  .menu-card.purple::before { background: linear-gradient(90deg, transparent, var(--accent-purple), transparent); }
+  .menu-card.red::before { background: linear-gradient(90deg, transparent, var(--accent-red), transparent); }
+
+  .menu-card:active { transform: scale(0.97); }
+
+  .menu-icon { font-size: 32px; margin-bottom: 8px; }
+
+  .menu-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+
+  .menu-sub { font-size: 11px; color: var(--text-muted); }
+
+  .menu-card.green .menu-title { color: var(--accent-green); }
+  .menu-card.blue .menu-title { color: var(--accent-blue); }
+  .menu-card.gold .menu-title { color: var(--accent-gold); }
+  .menu-card.purple .menu-title { color: var(--accent-purple); }
+  .menu-card.red .menu-title { color: var(--accent-red); }
+
+  .menu-badge {
+    position: absolute;
+    top: 10px; right: 10px;
+    background: var(--accent-red);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 10px;
+  }
+
+  /* ===== BOTTOM NAV ===== */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: rgba(5,10,18,0.97);
+    border-top: 1px solid var(--border);
+    display: flex;
+    z-index: 100;
+    backdrop-filter: blur(10px);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .nav-item {
+    flex: 1;
+    padding: 10px 4px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .nav-item .nav-icon { font-size: 20px; margin-bottom: 3px; }
+  .nav-item .nav-label { font-size: 10px; color: var(--text-muted); font-weight: 600; }
+  .nav-item.active .nav-label { color: var(--accent-blue); }
+  .nav-item.active .nav-icon { filter: drop-shadow(0 0 6px var(--accent-blue)); }
+
+  /* ===== STUDENT CARD ===== */
+  .student-card {
+    background: linear-gradient(135deg, #0d1b2a, #0a1520);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    margin: 0 16px 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .student-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+  }
+
+  .student-card.grade-1::before, .student-card.grade-2::before, .student-card.grade-3::before { background: var(--accent-green); }
+  .student-card.grade-4::before, .student-card.grade-5::before { background: var(--accent-blue); }
+  .student-card.grade-6::before, .student-card.grade-7::before { background: var(--accent-gold); }
+  .student-card.grade-8::before, .student-card.grade-9::before, .student-card.grade-10::before { background: var(--accent-red); }
+
+  .student-card:active { transform: scale(0.98); background: #101e30; }
+
+  .student-avatar {
+    width: 48px; height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .student-info { flex: 1; }
+  .student-name { font-family: 'Rajdhani', sans-serif; font-size: 17px; font-weight: 700; }
+  .student-meta { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+  .student-id-badge {
+    background: rgba(0,0,0,0.5);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 4px 8px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent-blue);
+  }
+
+  .payment-status {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+    margin-top: 4px;
+    display: inline-block;
+  }
+
+  .paid { background: rgba(0,255,135,0.15); color: var(--accent-green); border: 1px solid rgba(0,255,135,0.3); }
+  .due { background: rgba(255,59,92,0.15); color: var(--accent-red); border: 1px solid rgba(255,59,92,0.3); }
+  .partial { background: rgba(255,215,0,0.15); color: var(--accent-gold); border: 1px solid rgba(255,215,0,0.3); }
+
+  /* ===== SECTION HEADER ===== */
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 16px 10px;
+  }
+
+  .section-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--accent-blue);
+    letter-spacing: 0.5px;
+  }
+
+  .section-count {
+    font-size: 12px;
+    color: var(--text-muted);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    padding: 3px 10px;
+    border-radius: 10px;
+  }
+
+  /* ===== SEARCH BAR ===== */
+  .search-bar {
+    margin: 0 16px 12px;
+    position: relative;
+  }
+
+  .search-bar input {
+    width: 100%;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 11px 14px 11px 40px;
+    color: var(--text-primary);
+    font-size: 14px;
+    font-family: 'Hind Siliguri', sans-serif;
+    outline: none;
+    transition: all 0.3s;
+  }
+
+  .search-bar input:focus { border-color: var(--accent-blue); }
+
+  .search-bar .search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 16px;
+  }
+
+  /* ===== DETAIL VIEW ===== */
+  .detail-header {
+    padding: 20px 16px;
+    background: linear-gradient(135deg, #0a1520, #0d2040);
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+  }
+
+  .detail-avatar {
+    width: 70px; height: 70px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0 auto 12px;
+    border: 2px solid;
+  }
+
+  .detail-name { font-family: 'Rajdhani', sans-serif; font-size: 24px; font-weight: 700; }
+  .detail-id { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 16px;
+  }
+
+  .info-item {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px;
+  }
+
+  .info-label { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
+  .info-value { font-family: 'Rajdhani', sans-serif; font-size: 16px; font-weight: 700; color: var(--text-primary); }
+  .info-item.full { grid-column: 1 / -1; }
+
+  /* ===== ROUTINE CARD ===== */
+  .routine-day {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin: 0 16px 10px;
+    overflow: hidden;
+  }
+
+  .routine-day-header {
+    background: linear-gradient(135deg, #0d2040, #0a1530);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .day-name {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--accent-gold);
+  }
+
+  .today-badge {
+    background: var(--accent-green);
+    color: #050a12;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 6px;
+  }
+
+  .subject-slot {
+    padding: 10px 16px;
+    border-bottom: 1px solid rgba(26,48,80,0.5);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .subject-slot:last-child { border-bottom: none; }
+
+  .slot-time {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent-blue);
+    width: 70px;
+    flex-shrink: 0;
+  }
+
+  .slot-subject { font-size: 14px; font-weight: 600; }
+  .slot-topic { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+  /* ===== PAYMENT ===== */
+  .payment-row {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    margin: 0 16px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .payment-month { font-family: 'Rajdhani', sans-serif; font-size: 16px; font-weight: 700; }
+  .payment-date { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .payment-amount { font-family: 'Rajdhani', sans-serif; font-size: 20px; font-weight: 700; color: var(--accent-gold); }
+
+  /* ===== MODAL ===== */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.8);
+    z-index: 200;
+    align-items: flex-end;
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-overlay.active { display: flex; animation: fadeIn 0.2s ease; }
+
+  .modal {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px 20px 0 0;
+    padding: 20px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: slideUp 0.3s ease;
+  }
+
+  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+  .modal-handle {
+    width: 40px; height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    margin: 0 auto 20px;
+  }
+
+  .modal-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--accent-blue);
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  /* ===== FILTER TABS ===== */
+  .filter-tabs {
+    display: flex;
+    gap: 8px;
+    padding: 0 16px 12px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .filter-tab {
+    padding: 7px 14px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+    color: var(--text-muted);
+  }
+
+  .filter-tab.active {
+    background: linear-gradient(135deg, var(--accent-blue), #0055aa);
+    border-color: var(--accent-blue);
+    color: white;
+    box-shadow: var(--glow-blue);
+  }
+
+  /* ===== TOAST ===== */
+  .toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-100px);
+    background: linear-gradient(135deg, #0d2040, #0a1530);
+    border: 1px solid var(--accent-green);
+    border-radius: 12px;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent-green);
+    z-index: 999;
+    transition: transform 0.3s ease;
+    white-space: nowrap;
+    box-shadow: var(--glow-green);
+  }
+
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ===== REFERRAL ===== */
+  .referral-card {
+    background: linear-gradient(135deg, #0d2040, #1a0d40);
+    border: 1px solid rgba(180,79,255,0.3);
+    border-radius: 16px;
+    padding: 16px;
+    margin: 0 16px 12px;
+  }
+
+  .referral-code {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent-purple);
+    text-align: center;
+    letter-spacing: 4px;
+    text-shadow: 0 0 20px rgba(180,79,255,0.5);
+    margin: 10px 0;
+  }
+
+  /* ===== SCROLLABLE CONTENT ===== */
+  .scroll-content {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 80px;
+    scrollbar-width: none;
+  }
+
+  .scroll-content::-webkit-scrollbar { display: none; }
+
+  /* ===== PAGE TITLE BAR ===== */
+  .page-top {
+    background: linear-gradient(180deg, rgba(5,10,18,0.98), transparent);
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    backdrop-filter: blur(10px);
+  }
+
+  .page-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: 0.5px;
+    flex: 1;
+  }
+
+  /* ===== ANNOUNCEMENT ===== */
+  .announcement-card {
+    background: linear-gradient(135deg, rgba(0,200,255,0.1), rgba(0,255,135,0.05));
+    border: 1px solid rgba(0,200,255,0.2);
+    border-radius: 14px;
+    padding: 14px;
+    margin: 0 16px 12px;
+  }
+
+  .ann-date { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; }
+  .ann-text { font-size: 14px; line-height: 1.6; }
+
+  /* Home content area */
+  .home-content { flex: 1; overflow-y: auto; padding-bottom: 80px; scrollbar-width: none; }
+  .home-content::-webkit-scrollbar { display: none; }
+
+  /* Quiz */
+  .quiz-option {
+    background: var(--bg-card);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    margin: 0 16px 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+  }
+  .quiz-option:active { transform: scale(0.98); }
+  .quiz-option.correct { border-color: var(--accent-green); background: rgba(0,255,135,0.1); color: var(--accent-green); }
+  .quiz-option.wrong { border-color: var(--accent-red); background: rgba(255,59,92,0.1); color: var(--accent-red); }
+
+  .divider { height: 1px; background: var(--border); margin: 4px 16px 12px; }
+
+  /* Colors for avatars */
+  .av-blue { background: linear-gradient(135deg, #003366, #006699); color: var(--accent-blue); border: 1px solid var(--accent-blue); }
+  .av-green { background: linear-gradient(135deg, #003322, #006644); color: var(--accent-green); border: 1px solid var(--accent-green); }
+  .av-gold { background: linear-gradient(135deg, #332200, #664400); color: var(--accent-gold); border: 1px solid var(--accent-gold); }
+  .av-purple { background: linear-gradient(135deg, #220033, #440066); color: var(--accent-purple); border: 1px solid var(--accent-purple); }
+  .av-red { background: linear-gradient(135deg, #330011, #660022); color: var(--accent-red); border: 1px solid var(--accent-red); }
+</style>
+</head>
+<body>
+
+<!-- ===== LOGIN SCREEN ===== -->
+<div id="loginScreen" class="screen active">
+  <div class="login-logo">
+    <div class="badge">🎓</div>
+    <h1>ASHRAF COACHING</h1>
+    <p>Smart Learning Center, Bayazid, Chittagong</p>
+  </div>
+
+  <div class="login-card">
+    <div class="login-tabs">
+      <div class="login-tab active" onclick="switchLoginTab('student')">Student</div>
+      <div class="login-tab" onclick="switchLoginTab('parent')">Parent</div>
+    </div>
+
+    <div id="studentLogin">
+      <div class="form-group">
+        <label>COACHING ID</label>
+        <input type="text" id="stuId" placeholder="AC-001">
+      </div>
+      <div class="form-group">
+        <label>PASSWORD</label>
+        <input type="password" id="stuPass" placeholder="••••••">
+      </div>
+      <button class="btn-primary btn-green" onclick="login('student')">STUDENT LOGIN</button>
+    </div>
+
+    <div id="parentLogin" style="display:none">
+      <div class="form-group">
+        <label>COACHING ID (সন্তানের)</label>
+        <input type="text" id="parId" placeholder="AC-001">
+      </div>
+      <div class="form-group">
+        <label>MOBILE NUMBER</label>
+        <input type="tel" id="parPhone" placeholder="01XXXXXXXXX">
+      </div>
+      <button class="btn-primary btn-gold" onclick="login('parent')">PARENT LOGIN</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ADMIN DASHBOARD ===== -->
+<div id="adminDash" class="screen">
+  <div class="home-header">
+    <div class="greeting">Welcome back,</div>
+    <div class="user-name">Ashraf Sir 🎯</div>
+    <div class="stats-row">
+      <div class="stat-pill">👨‍🎓 <span class="val" id="totalStudents">6</span> Students</div>
+      <div class="stat-pill">💰 <span class="val">৳18,500</span> This Month</div>
+      <div class="stat-pill">⚠️ <span class="val" id="dueCnt">2</span> Due</div>
+    </div>
+  </div>
+
+  <div class="home-content">
+    <!-- Announcement -->
+    <div class="section-header">
+      <span class="section-title">📢 NOTICE</span>
+    </div>
+    <div class="announcement-card">
+      <div class="ann-date">আজকের নোটিশ · May 8, 2026</div>
+      <div class="ann-text">আগামীকাল SSC Science Batch-এর বিশেষ ক্লাস সকাল ৯টায়। সবাইকে নোটবুক আনতে হবে।</div>
+    </div>
+
+    <!-- Quick Menu -->
+    <div class="section-header">
+      <span class="section-title">⚡ QUICK ACCESS</span>
+    </div>
+
+    <div class="menu-grid">
+      <div class="menu-card green" onclick="showScreen('studentsScreen')">
+        <div class="menu-icon">👨‍🎓</div>
+        <div class="menu-title">STUDENTS</div>
+        <div class="menu-sub">সকল ছাত্রছাত্রী</div>
+        <span class="menu-badge" id="newBadge">NEW</span>
+      </div>
+      <div class="menu-card blue" onclick="showScreen('routineScreen')">
+        <div class="menu-icon">📅</div>
+        <div class="menu-title">ROUTINE</div>
+        <div class="menu-sub">ক্লাস শিডিউল</div>
+      </div>
+      <div class="menu-card gold" onclick="showScreen('paymentScreen')">
+        <div class="menu-icon">💳</div>
+        <div class="menu-title">PAYMENT</div>
+        <div class="menu-sub">ফি ট্র্যাকিং</div>
+      </div>
+      <div class="menu-card purple" onclick="showScreen('referralScreen')">
+        <div class="menu-icon">🎁</div>
+        <div class="menu-title">REFERRAL</div>
+        <div class="menu-sub">Discount System</div>
+      </div>
+      <div class="menu-card red" onclick="showScreen('quizScreen')">
+        <div class="menu-icon">📝</div>
+        <div class="menu-title">QUIZ</div>
+        <div class="menu-sub">MCQ Practice</div>
+      </div>
+      <div class="menu-card blue" onclick="showScreen('addStudentScreen')">
+        <div class="menu-icon">➕</div>
+        <div class="menu-title">ADD STUDENT</div>
+        <div class="menu-sub">নতুন ভর্তি</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <div class="nav-item active">
+      <div class="nav-icon">🏠</div>
+      <div class="nav-label">হোম</div>
+    </div>
+    <div class="nav-item" onclick="showScreen('studentsScreen')">
+      <div class="nav-icon">👥</div>
+      <div class="nav-label">Students</div>
+    </div>
+    <div class="nav-item" onclick="showScreen('paymentScreen')">
+      <div class="nav-icon">💰</div>
+      <div class="nav-label">Payment</div>
+    </div>
+    <div class="nav-item" onclick="showScreen('routineScreen')">
+      <div class="nav-icon">📅</div>
+      <div class="nav-label">Routine</div>
+    </div>
+    <div class="nav-item" onclick="logout()">
+      <div class="nav-icon">🚪</div>
+      <div class="nav-label">Logout</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== STUDENTS SCREEN ===== -->
+<div id="studentsScreen" class="screen">
+  <div class="page-top">
+    <div class="nav-back" onclick="showScreen('adminDash')">←</div>
+    <div class="page-title">ALL STUDENTS</div>
+    <div style="font-size:20px; cursor:pointer" onclick="showScreen('addStudentScreen')">➕</div>
+  </div>
+
+  <div class="scroll-content">
+    <div class="search-bar">
+      <span class="search-icon">🔍</span>
+      <input type="text" placeholder="নাম বা ID দিয়ে খুঁজুন..." oninput="filterStudents(this.value)">
+    </div>
+
+    <div class="filter-tabs">
+      <div class="filter-tab active" onclick="filterByClass(this,'all')">সব</div>
+      <div class="filter-tab" onclick="filterByClass(this,'1')">Class 1-3</div>
+      <div class="filter-tab" onclick="filterByClass(this,'4')">Class 4-5</div>
+      <div class="filter-tab" onclick="filterByClass(this,'6')">Class 6-7</div>
+      <div class="filter-tab" onclick="filterByClass(this,'8')">Class 8-10</div>
+    </div>
+
+    <div id="studentsList"></div>
+  </div>
+</div>
+
+<!-- ===== STUDENT DETAIL ===== -->
+<div id="studentDetail" class="screen">
+  <div class="page-top">
+    <div class="nav-back" onclick="showScreen('studentsScreen')">←</div>
+    <div class="page-title">STUDENT PROFILE</div>
+  </div>
+
+  <div class="scroll-content" id="studentDetailContent"></div>
+</div>
+
+<!-- ===== ROUTINE SCREEN ===== -->
+<div id="routineScreen" class="screen">
+  <div class="page-top">
+    <div class="nav-back" onclick="showScreen('adminDash')">←</div>
+    <div class="page-title">WEEKLY ROUTINE</div>
+  </div>
+
+  <div class="scroll-content">
+    <div class="filter-tabs" style="margin-bottom:4px">
+      <div class="filter-tab active" onclick="filterRoutine(this,'all')">সব</div>
+      <div class="filter-tab" onclick="filterRoutine(this,'class1')">Class 1-5</div>
+      <div class="filter-tab" onclick="filterRoutine(this,'ssc')">SSC</div>
+      <div class="filter-tab" onclick="filterRoutine(this,'commerce')">Commerce</div>
+    </div>
+    <div id="routineList"></div>
+  </div>
+</div>
+
+<!-- ===== PAYMENT SCREEN ===== -->
+<div id="paymentScreen" class="screen">
+  <div class="page-top">
+    <div class="nav-back" onclick="showScreen('adminDash')">←</div>
+    <div class="page-title">PAYMENT RECORDS</div>
+  </div>
+
+  <div class="scroll-content">
+    <div style="padding: 0 16px 12px;">
+      <div style="background: linear-gradient(135deg, #0d2040, #0d1a30); border: 1px solid rgba(255,215,0,0.3); border-radius:14px; padding:16px; display:flex; justify-content:space-between; align-items:center">
+        <div>
+          <div style="font-size:12px; color:var(--text-muted)">এই মাসের আয়</div>
+          <div style="font-family:'Rajdhani',sans-serif; font-size:28px; font-weight:700; color:var(--accent-gold)">৳18,500</div>
+        </div>
+        <div>
+          <div style="font-size:12px; color:var(--text-muted)">বকেয়া মোট</div>
+          <div style="font-family:'Rajdhani',sans-serif; font-size:28px; font-weight:700; color:var(--accent-red)">৳3,000</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <span class="section-title">💳 RECENT PAYMENTS</span>
+    </div>
+    <div id="paymentList"></div>
+
+    <div class="section-header" style="margin-top:8px">
+      <span class="section-title">⚠️ DUE PAYMENTS</span>
+    </div>
+    <div id="dueList"></div>
+  </div>
+</div>
+
+<!-- ===== REFERRAL SCREEN ===== -->
+<div id="referralScreen" class="screen">
+  <div class="page-top">
+    <div class="nav-back" onclick="showScreen('adminDash')">←</div>
+    <div class="page-title">REFERRAL SYSTEM</div>
+  </div>
+
+  <div class="scroll-content">
+    <div style="padding:16px">
+      <div style="background:linear-gradient(135deg,rgba(180,79,255,0.1),rgba(0,200,255,0.05)); border:1px solid rgba(180,79,255,0.3); border-radius:16px; padding:16px; text-align:center; margin-bottom:16px">
+        <div style="font-size:13px; color:var(--text-muted); margin-bottom:8px">যদি কেউ নতুন student refer করে তাহলে</div>
+        <div style="font-family:'Rajdhani',sans-serif; font-size:32px; font-weight:700; color:var(--accent-purple)">৳200 DISCOUNT</div>
+        <div style="font-size:12px; color:var(--text-muted); margin-top:6px">Referrer পাবে ১ মাসের ফি-তে ২০০ টাকা ছাড়</div>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <span class="section-title">🏆 TOP REFERRERS</span>
+    </div>
+    <div id="referralList"></div>
+
+    <div class="section-header" style="margin-top:8px">
+      <span class="section-title">➕ ADD REFERRAL</span>
+    </div>
+    <div style="padding:0 16px 16px">
+      <div class="form-group">
+        <label>নতুন Student ID</label>
+        <input type="text" id="newRefStudent" placeholder="AC-007">
+      </div>
+      <div class="form-group">
+        <label>Referred By (Student ID)</label>
+        <input type="text" id="refByStudent" placeholder="AC-001">
+      </div>
+      <button class="btn-primary btn-purple" onclick="addReferral()" style="background:linear-gradient(135deg,#b44fff,#6600cc)">ADD REFERRAL</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== QUIZ SCREEN ===== -->
+<div id="quizScreen" class="screen">
+  <div class="page-top">
+    <div class="nav-back" onclick="showScreen('adminDash')">←</div>
+    <div class="page-title">MCQ QUIZ</div>
+  </div>
+
+  <div class="scroll-content">
+    <div style="padding:16px">
+      <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:14px; padding:16px; margin-bottom:16px">
+        <div style="font-size:12px; color:var(--accent-blue); font-weight:700; margin-bottom:8px">SCIENCE · SSC LEVEL</div>
+        <div style="font-size:16px; font-weight:600; line-height:1.6" id="quizQuestion">পানির রাসায়নিক সূত্র কোনটি?</div>
+        <div style="font-size:12px; color:var(--text-muted); margin-top:8px">প্রশ্ন 1 / 5</div>
+      </div>
+    </div>
+
+    <div id="quizOptions"></div>
+
+    <div style="padding:0 16px; display:none" id="quizResult">
+      <div style="background:linear-gradient(135deg,rgba(0,255,135,0.1),rgba(0,200,255,0.05)); border:1px solid rgba(0,255,135,0.3); border-radius:14px; padding:16px; text-align:center">
+        <div style="font-size:32px; margin-bottom:8px">🎉</div>
+        <div style="font-family:'Rajdhani',sans-serif; font-size:20px; font-weight:700; color:var(--accent-green)">CORRECT!</div>
+        <div style="font-size:13px; color:var(--text-muted); margin-top:4px">সঠিক উত্তর: H₂O</div>
+      </div>
+      <button class="btn-primary" style="margin-top:12px" onclick="nextQuestion()">পরের প্রশ্ন →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ADD STUDENT SCREEN ===== -->
+<div id="addStudentScreen" class="screen">
+  <div class="page-top">
+    <div class="nav-back" onclick="showScreen('studentsScreen')">←</div>
+    <div class="page-title">NEW STUDENT</div>
+  </div>
+
+  <div class="scroll-content">
+    <div style="padding:0 16px 16px">
+      <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:14px; padding:16px; margin-bottom:16px">
+        <div style="font-family:'Rajdhani',sans-serif; font-size:16px; font-weight:700; color:var(--accent-blue); margin-bottom:12px">📋 STUDENT INFORMATION</div>
+
+        <div class="form-group">
+          <label>পূর্ণ নাম</label>
+          <input type="text" id="newName" placeholder="Mohammad Rahim">
+        </div>
+        <div class="form-group">
+          <label>ক্লাস</label>
+          <select id="newClass">
+            <option value="1">Class 1</option>
+            <option value="2">Class 2</option>
+            <option value="3">Class 3</option>
+            <option value="4">Class 4</option>
+            <option value="5">Class 5</option>
+            <option value="6">Class 6</option>
+            <option value="7">Class 7</option>
+            <option value="8">Class 8</option>
+            <option value="9">Class 9</option>
+            <option value="10">Class 10 (SSC)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>বিভাগ</label>
+          <select id="newBatch">
+            <option>General</option>
+            <option>Science</option>
+            <option>Commerce</option>
+            <option>Humanities</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>মাসিক ফি (৳)</label>
+          <input type="number" id="newFee" placeholder="2500">
+        </div>
+        <div class="form-group">
+          <label>অভিভাবকের নম্বর</label>
+          <input type="tel" id="newPhone" placeholder="01XXXXXXXXX">
+        </div>
+        <div class="form-group">
+          <label>ঠিকানা</label>
+          <textarea id="newAddress" rows="2" placeholder="Bayazid, Chittagong" style="resize:none"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Referred By (Optional)</label>
+          <input type="text" id="newReferral" placeholder="AC-XXX">
+        </div>
+
+        <button class="btn-primary btn-green" onclick="addStudent()">✅ ADD STUDENT</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== STUDENT DASHBOARD (Student Login) ===== -->
+<div id="studentDash" class="screen">
+  <div class="home-header">
+    <div class="greeting">আমার Dashboard</div>
+    <div class="user-name" id="stuDashName">Rahim 📚</div>
+    <div class="stats-row">
+      <div class="stat-pill" id="stuIdPill">🆔 AC-001</div>
+      <div class="stat-pill" id="stuClassPill">📚 Class 9</div>
+      <div class="stat-pill" id="stuFeePill" style="color:var(--accent-green)">✅ Paid</div>
+    </div>
+  </div>
+
+  <div class="home-content">
+    <div class="menu-grid">
+      <div class="menu-card blue" onclick="showScreen('myRoutineScreen')">
+        <div class="menu-icon">📅</div>
+        <div class="menu-title">MY ROUTINE</div>
+        <div class="menu-sub">আমার রুটিন</div>
+      </div>
+      <div class="menu-card green" onclick="showScreen('quizScreen')">
+        <div class="menu-icon">📝</div>
+        <div class="menu-title">QUIZ</div>
+        <div class="menu-sub">MCQ Practice</div>
+      </div>
+      <div class="menu-card gold" onclick="showScreen('myPaymentScreen')">
+        <div class="menu-icon">💰</div>
+        <div class="menu-title">MY PAYMENT</div>
+        <div class="menu-sub">ফি রেকর্ড</div>
+      </div>
+      <div class="menu-card purple" onclick="showScreen('myReferralScreen')">
+        <div class="menu-icon">🎁</div>
+        <div class="menu-title">REFER & EARN</div>
+        <div class="menu-sub">Discount পান</div>
+      </div>
+    </div>
+
+    <div class="section-header"><span class="section-title">📢 NOTICE</span></div>
+    <div class="announcement-card">
+      <div class="ann-date">May 8, 2026</div>
+      <div class="ann-text">আগামীকাল SSC Science Batch-এর বিশেষ ক্লাস সকাল ৯টায়।</div>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <div class="nav-item active"><div class="nav-icon">🏠</div><div class="nav-label">হোম</div></div>
+    <div class="nav-item" onclick="showScreen('myRoutineScreen')"><div class="nav-icon">📅</div><div class="nav-label">Routine</div></div>
+    <div class="nav-item" onclick="showScreen('quizScreen')"><div class="nav-icon">📝</div><div class="nav-label">Quiz</div></div>
+    <div class="nav-item" onclick="showScreen('myPaymentScreen')"><div class="nav-icon">💳</div><div class="nav-label">Payment</div></div>
+    <div class="nav-item" onclick="logout()"><div class="nav-icon">🚪</div><div class="nav-label">Logout</div></div>
+  </div>
+</div>
+
+<!-- My Routine -->
+<div id="myRoutineScreen" class="screen">
+  <div class="page-top">
+    <div class="nav-back" onclick="showScreen('studentDash')">←</div>
+    <div class="page-title">MY ROUTINE</div>
+  </div>
+  <div class="scroll-content" id="myRoutineContent"></div>
+</div>
+
+<!-- My Payment -->
+<div id="myPaymentScreen" class="screen">
+  <div class="page-top">
+    <div class="nav-back" onclick="showScreen('studentDash')">←</div>
+    <div class="page-title">MY PAYMENTS</div>
+  </div>
+  <div class="scroll-content" id="myPaymentContent"></div>
+</div>
+
+<!-- My Referral -->
+<div id="myReferralScreen" class="screen">
+  <div class="page-top">
+    <div class="nav-back" onclick="showScreen('studentDash')">←</div>
+    <div class="page-title">REFER & EARN</div>
+  </div>
+  <div class="scroll-content">
+    <div style="padding:16px; text-align:center">
+      <div style="font-size:40px; margin-bottom:12px">🎁</div>
+      <div style="font-size:14px; color:var(--text-muted); margin-bottom:16px; line-height:1.6">বন্ধুকে Ashraf Coaching-এ ভর্তি করালে<br>তোমার পরের মাসের ফি-তে ২০০ টাকা ছাড়!</div>
+      <div style="font-size:13px; color:var(--text-muted); margin-bottom:8px">তোমার Referral Code</div>
+      <div class="referral-code" id="myRefCode">AC-001</div>
+      <button class="btn-primary" style="margin-top:12px" onclick="showToast('Referral code copied! 📋')">📋 CODE COPY করুন</button>
+    </div>
+    <div style="padding:0 16px">
+      <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:14px; padding:14px">
+        <div style="font-family:'Rajdhani',sans-serif; font-size:15px; font-weight:700; color:var(--accent-gold); margin-bottom:10px">তোমার Referrals</div>
+        <div style="font-size:13px; color:var(--text-muted)" id="myReferrals">এখনো কোনো referral নেই</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- PWA Install Banner -->
+<div id="installBanner" style="display:none; position:fixed; bottom:90px; left:16px; right:16px; background:linear-gradient(135deg,#0d2040,#0a1530); border:1px solid #00c8ff; border-radius:14px; padding:14px 16px; z-index:150; box-shadow:0 0 20px rgba(0,200,255,0.3)">
+  <div style="display:flex; align-items:center; gap:12px; justify-content:space-between">
+    <div style="display:flex; align-items:center; gap:10px">
+      <span style="font-size:28px">📲</span>
+      <div>
+        <div style="font-family:'Rajdhani',sans-serif; font-size:14px; font-weight:700; color:#00c8ff">Home Screen-এ Add করুন</div>
+        <div style="font-size:11px; color:#5a7a9a; margin-top:2px">App-এর মতো ব্যবহার করুন, offline-ও চলবে</div>
+      </div>
+    </div>
+    <div style="display:flex; gap:8px; flex-shrink:0">
+      <button onclick="installApp()" style="background:linear-gradient(135deg,#00c8ff,#0066cc); border:none; border-radius:8px; padding:8px 14px; color:white; font-size:12px; font-weight:700; cursor:pointer">Install</button>
+      <button onclick="document.getElementById('installBanner').style.display='none'" style="background:#1a3050; border:none; border-radius:8px; padding:8px 10px; color:#5a7a9a; font-size:12px; cursor:pointer">✕</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('installBanner').style.display = 'block';
+});
+
+function installApp() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(r => {
+      deferredPrompt = null;
+      document.getElementById('installBanner').style.display = 'none';
+    });
+  } else {
+    // iOS fallback
+    alert('iOS-এ: Share বাটন ⬆️ → "Add to Home Screen" চাপুন');
+  }
+}
+
+window.addEventListener('appinstalled', () => {
+  document.getElementById('installBanner').style.display = 'none';
+});
+</script>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== DATA =====
+let students = [
+  { id: 'AC-001', name: 'Mohammad Rahim', class: 9, batch: 'Science', fee: 2500, phone: '01712345678', address: 'Bayazid, Ctg', paid: true, paidDate: 'May 1', referredBy: null, referrals: ['AC-004'], avatar: 'av-blue', password: '1234' },
+  { id: 'AC-002', name: 'Fatema Khatun', class: 7, batch: 'General', fee: 2000, phone: '01823456789', address: 'Oxygen, Ctg', paid: true, paidDate: 'May 2', referredBy: 'AC-001', referrals: [], avatar: 'av-green', password: '1234' },
+  { id: 'AC-003', name: 'Hasan Ali', class: 10, batch: 'Science', fee: 3000, phone: '01934567890', address: 'Bayazid, Ctg', paid: false, paidDate: null, referredBy: null, referrals: ['AC-005'], avatar: 'av-gold', password: '1234' },
+  { id: 'AC-004', name: 'Sumaiya Islam', class: 5, batch: 'General', fee: 1500, phone: '01745678901', address: 'Pahartali, Ctg', paid: true, paidDate: 'May 3', referredBy: 'AC-001', referrals: [], avatar: 'av-purple', password: '1234' },
+  { id: 'AC-005', name: 'Rakib Hossain', class: 10, batch: 'Commerce', fee: 2800, phone: '01856789012', address: 'Bayazid, Ctg', paid: false, paidDate: null, referredBy: 'AC-003', referrals: [], avatar: 'av-red', password: '1234' },
+  { id: 'AC-006', name: 'Nadia Begum', class: 3, batch: 'General', fee: 1200, phone: '01967890123', address: 'Oxygen, Ctg', paid: true, paidDate: 'May 1', referredBy: null, referrals: [], avatar: 'av-blue', password: '1234' },
+];
+
+let currentUser = null;
+let currentUserType = null;
+
+const weeklyRoutine = [
+  { day: 'শনিবার', isToday: false, slots: [
+    { time: '৩:০০ PM', subject: 'গণিত', topic: 'বীজগণিত - সমীকরণ', batch: 'class1' },
+    { time: '৪:৩০ PM', subject: 'ইংরেজি', topic: 'Grammar - Tense', batch: 'class1' },
+    { time: '৬:০০ PM', subject: 'বিজ্ঞান', topic: 'Physics - Motion', batch: 'ssc' },
+  ]},
+  { day: 'রবিবার', isToday: false, slots: [
+    { time: '৩:০০ PM', subject: 'গণিত', topic: 'SSC - Trigonometry', batch: 'ssc' },
+    { time: '৫:০০ PM', subject: 'হিসাববিজ্ঞান', topic: 'Journal Entry', batch: 'commerce' },
+    { time: '৬:৩০ PM', subject: 'বাংলা', topic: 'রচনা ও ব্যাকরণ', batch: 'class1' },
+  ]},
+  { day: 'সোমবার', isToday: false, slots: [
+    { time: '৩:০০ PM', subject: 'বিজ্ঞান', topic: 'Chemistry - Periodic Table', batch: 'ssc' },
+    { time: '৫:০০ PM', subject: 'গণিত', topic: 'Class 5-7 পাটীগণিত', batch: 'class1' },
+    { time: '৭:০০ PM', subject: 'ব্যবসায় শিক্ষা', topic: 'Management', batch: 'commerce' },
+  ]},
+  { day: 'মঙ্গলবার', isToday: true, slots: [
+    { time: '৩:০০ PM', subject: 'ইংরেজি', topic: 'SSC Reading & Writing', batch: 'ssc' },
+    { time: '৫:০০ PM', subject: 'গণিত', topic: 'Geometry - Triangle', batch: 'class1' },
+    { time: '৬:৩০ PM', subject: 'হিসাববিজ্ঞান', topic: 'Ledger & Trial Balance', batch: 'commerce' },
+  ]},
+  { day: 'বুধবার', isToday: false, slots: [
+    { time: '৩:০০ PM', subject: 'Physics', topic: 'Electricity - Current', batch: 'ssc' },
+    { time: '৫:০০ PM', subject: 'গণিত', topic: 'Statistics', batch: 'ssc' },
+    { time: '৭:০০ PM', subject: 'English', topic: 'Commerce English', batch: 'commerce' },
+  ]},
+  { day: 'বৃহস্পতিবার', isToday: false, slots: [
+    { time: '৩:০০ PM', subject: 'বিজ্ঞান', topic: 'Biology - Cell', batch: 'ssc' },
+    { time: '৫:০০ PM', subject: 'সাধারণ বিজ্ঞান', topic: 'Class 4-7 বিজ্ঞান', batch: 'class1' },
+    { time: '৬:৩০ PM', subject: 'গণিত', topic: 'Business Math', batch: 'commerce' },
+  ]},
+];
+
+const quizData = [
+  { q: 'পানির রাসায়নিক সূত্র কোনটি?', options: ['CO₂', 'H₂O', 'NaCl', 'O₂'], ans: 1 },
+  { q: 'বাংলাদেশের রাজধানী কোনটি?', options: ['চট্টগ্রাম', 'খুলনা', 'ঢাকা', 'সিলেট'], ans: 2 },
+  { q: '২ × ৩ + ৪ = ?', options: ['১৪', '১০', '১২', '৮'], ans: 1 },
+  { q: 'সূর্য কোন দিকে ওঠে?', options: ['পশ্চিম', 'উত্তর', 'দক্ষিণ', 'পূর্ব'], ans: 3 },
+  { q: 'Photosynthesis-এ কোন গ্যাস ব্যবহৃত হয়?', options: ['O₂', 'CO₂', 'N₂', 'H₂'], ans: 1 },
+];
+
+let currentQ = 0;
+let answered = false;
+
+// ===== FUNCTIONS =====
+function switchLoginTab(type) {
+  ['student','parent'].forEach(t => {
+    document.getElementById(t+'Login').style.display = 'none';
+  });
+  document.querySelectorAll('.login-tab').forEach((el,i) => {
+    el.classList.toggle('active', ['student','parent'][i] === type);
+  });
+  document.getElementById(type+'Login').style.display = 'block';
+}
+
+function login(type) {
+  if(type === 'admin') {
+    const u = document.getElementById('adminUser').value;
+    const p = document.getElementById('adminPass').value;
+    if(u === 'admin' && p === '1234') {
+      currentUserType = 'admin';
+      renderStudentsList(students);
+      renderPayments();
+      renderRoutine('all');
+      renderReferrals();
+      showScreen('adminDash');
+      showToast('Welcome, Ashraf Sir! 👋');
+    } else {
+      showToast('Wrong credentials! ❌');
+    }
+  } else if(type === 'student') {
+    const id = document.getElementById('stuId').value.toUpperCase();
+    const pass = document.getElementById('stuPass').value;
+    const stu = students.find(s => s.id === id && s.password === pass);
+    if(stu) {
+      currentUser = stu;
+      currentUserType = 'student';
+      document.getElementById('stuDashName').textContent = stu.name.split(' ')[0] + ' 📚';
+      document.getElementById('stuIdPill').textContent = '🆔 ' + stu.id;
+      document.getElementById('stuClassPill').textContent = '📚 Class ' + stu.class;
+      document.getElementById('stuFeePill').textContent = stu.paid ? '✅ Paid' : '⚠️ Due';
+      document.getElementById('stuFeePill').style.color = stu.paid ? 'var(--accent-green)' : 'var(--accent-red)';
+      document.getElementById('myRefCode').textContent = stu.id;
+      renderMyRoutine(stu);
+      renderMyPayments(stu);
+      showScreen('studentDash');
+      showToast('Welcome, ' + stu.name.split(' ')[0] + '! 🎓');
+    } else {
+      showToast('Wrong ID or password! ❌');
+    }
+  } else {
+    showToast('Parent login coming soon! 🔜');
+  }
+}
+
+function logout() {
+  currentUser = null;
+  currentUserType = null;
+  showScreen('loginScreen');
+  showToast('Logged out successfully');
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function renderStudentsList(list) {
+  const container = document.getElementById('studentsList');
+  const total = document.getElementById('totalStudents');
+  const due = document.getElementById('dueCnt');
+  total.textContent = students.length;
+  due.textContent = students.filter(s => !s.paid).length;
+  
+  container.innerHTML = list.map(s => `
+    <div class="student-card grade-${s.class}" onclick="showStudentDetail('${s.id}')">
+      <div class="student-avatar ${s.avatar}">${s.name.charAt(0)}</div>
+      <div class="student-info">
+        <div class="student-name">${s.name}</div>
+        <div class="student-meta">Class ${s.class} · ${s.batch}</div>
+        <span class="payment-status ${s.paid ? 'paid' : 'due'}">${s.paid ? '✅ Paid - '+s.paidDate : '⚠️ DUE'}</span>
+      </div>
+      <div>
+        <div class="student-id-badge">${s.id}</div>
+        <div style="font-family:'Rajdhani',sans-serif; font-size:14px; font-weight:700; color:var(--accent-gold); text-align:right; margin-top:6px">৳${s.fee}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterStudents(q) {
+  const filtered = students.filter(s => 
+    s.name.toLowerCase().includes(q.toLowerCase()) || 
+    s.id.toLowerCase().includes(q.toLowerCase())
+  );
+  renderStudentsList(filtered);
+}
+
+function filterByClass(el, val) {
+  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  if(val === 'all') renderStudentsList(students);
+  else {
+    const ranges = {'1':[1,3],'4':[4,5],'6':[6,7],'8':[8,10]};
+    const r = ranges[val];
+    renderStudentsList(students.filter(s => s.class >= r[0] && s.class <= r[1]));
+  }
+}
+
+function showStudentDetail(id) {
+  const s = students.find(st => st.id === id);
+  const content = document.getElementById('studentDetailContent');
+  content.innerHTML = `
+    <div class="detail-header">
+      <div class="detail-avatar ${s.avatar}" style="font-size:28px; font-weight:700; width:70px; height:70px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 12px; border:2px solid">${s.name.charAt(0)}</div>
+      <div class="detail-name">${s.name}</div>
+      <div class="detail-id">${s.id} · ${s.batch}</div>
+      <div style="margin-top:8px">
+        <span class="payment-status ${s.paid ? 'paid' : 'due'}" style="font-size:13px">${s.paid ? '✅ PAID' : '⚠️ PAYMENT DUE'}</span>
+      </div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-item"><div class="info-label">CLASS</div><div class="info-value">Class ${s.class}</div></div>
+      <div class="info-item"><div class="info-label">BATCH</div><div class="info-value">${s.batch}</div></div>
+      <div class="info-item"><div class="info-label">MONTHLY FEE</div><div class="info-value" style="color:var(--accent-gold)">৳${s.fee}</div></div>
+      <div class="info-item"><div class="info-label">REFERRALS</div><div class="info-value" style="color:var(--accent-purple)">${s.referrals.length} জন</div></div>
+      <div class="info-item full"><div class="info-label">PHONE</div><div class="info-value">${s.phone}</div></div>
+      <div class="info-item full"><div class="info-label">ADDRESS</div><div class="info-value">${s.address}</div></div>
+      ${s.referredBy ? `<div class="info-item full"><div class="info-label">REFERRED BY</div><div class="info-value" style="color:var(--accent-purple)">${s.referredBy}</div></div>` : ''}
+    </div>
+
+    <div class="section-header"><span class="section-title">💳 PAYMENT HISTORY</span></div>
+    ${['May 2026','April 2026','March 2026'].map((m,i) => `
+    <div class="payment-row">
+      <div><div class="payment-month">${m}</div><div class="payment-date">${i===0 ? (s.paid ? 'Paid on '+s.paidDate : 'Not paid') : 'Paid'}</div></div>
+      <div>
+        <div class="payment-amount">৳${s.fee}</div>
+        <span class="payment-status ${i===0 ? (s.paid?'paid':'due') : 'paid'}" style="float:right">${i===0 ? (s.paid?'✅':'⚠️') : '✅'}</span>
+      </div>
+    </div>`).join('')}
+
+    <div style="padding:16px; display:flex; gap:10px">
+      <button class="btn-primary btn-green btn-sm" onclick="markPaid('${s.id}')">✅ Mark Paid</button>
+      <button class="btn-primary btn-sm" style="background:linear-gradient(135deg,#b44fff,#6600cc)" onclick="showToast('Routine updated!')">📅 Edit Routine</button>
+    </div>
+  `;
+  showScreen('studentDetail');
+}
+
+function markPaid(id) {
+  const s = students.find(st => st.id === id);
+  s.paid = true;
+  s.paidDate = 'May 8';
+  renderStudentsList(students);
+  showStudentDetail(id);
+  showToast('Payment marked as paid! ✅');
+}
+
+function renderPayments() {
+  const paid = document.getElementById('paymentList');
+  const due = document.getElementById('dueList');
+  
+  const paidStudents = students.filter(s => s.paid);
+  const dueStudents = students.filter(s => !s.paid);
+  
+  paid.innerHTML = paidStudents.map(s => `
+    <div class="payment-row">
+      <div style="display:flex; align-items:center; gap:10px">
+        <div class="student-avatar ${s.avatar}" style="width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px">${s.name.charAt(0)}</div>
+        <div><div class="payment-month">${s.name}</div><div class="payment-date">${s.id} · ${s.paidDate}</div></div>
+      </div>
+      <div><div class="payment-amount">৳${s.fee}</div><span class="payment-status paid">✅</span></div>
+    </div>
+  `).join('');
+
+  due.innerHTML = dueStudents.map(s => `
+    <div class="payment-row">
+      <div style="display:flex; align-items:center; gap:10px">
+        <div class="student-avatar ${s.avatar}" style="width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px">${s.name.charAt(0)}</div>
+        <div><div class="payment-month">${s.name}</div><div class="payment-date">${s.id} · Class ${s.class}</div></div>
+      </div>
+      <div>
+        <div class="payment-amount">৳${s.fee}</div>
+        <span class="payment-status due">⚠️ DUE</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderRoutine(filter) {
+  const container = document.getElementById('routineList');
+  container.innerHTML = weeklyRoutine.map(day => {
+    const slots = filter === 'all' ? day.slots : day.slots.filter(s => s.batch === filter);
+    if(slots.length === 0) return '';
+    return `
+    <div class="routine-day">
+      <div class="routine-day-header">
+        <div class="day-name">${day.day}</div>
+        ${day.isToday ? '<span class="today-badge">আজ</span>' : ''}
+      </div>
+      ${slots.map(slot => `
+        <div class="subject-slot">
+          <div class="slot-time">${slot.time}</div>
+          <div>
+            <div class="slot-subject">${slot.subject}</div>
+            <div class="slot-topic">${slot.topic}</div>
+          </div>
+        </div>
+      `).join('')}
+    </div>`;
+  }).join('');
+}
+
+function filterRoutine(el, val) {
+  document.querySelectorAll('#routineScreen .filter-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderRoutine(val);
+}
+
+function renderReferrals() {
+  const container = document.getElementById('referralList');
+  const referrers = students.filter(s => s.referrals.length > 0).sort((a,b) => b.referrals.length - a.referrals.length);
+  
+  container.innerHTML = referrers.map((s, i) => `
+    <div class="payment-row">
+      <div style="display:flex; align-items:center; gap:10px">
+        <div style="font-family:'Rajdhani',sans-serif; font-size:20px; font-weight:700; color:${i===0?'var(--accent-gold)':i===1?'#aaa':'#cd7f32'}; width:24px">#${i+1}</div>
+        <div class="student-avatar ${s.avatar}" style="width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px">${s.name.charAt(0)}</div>
+        <div><div class="payment-month">${s.name}</div><div class="payment-date">${s.id}</div></div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-family:'Rajdhani',sans-serif; font-size:20px; font-weight:700; color:var(--accent-purple)">${s.referrals.length} referral</div>
+        <div style="font-size:12px; color:var(--accent-green)">৳${s.referrals.length * 200} saved</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function addReferral() {
+  const newId = document.getElementById('newRefStudent').value.toUpperCase();
+  const refBy = document.getElementById('refByStudent').value.toUpperCase();
+  const referer = students.find(s => s.id === refBy);
+  const newStu = students.find(s => s.id === newId);
+  
+  if(!referer || !newStu) { showToast('Student ID পাওয়া যায়নি! ❌'); return; }
+  if(!referer.referrals.includes(newId)) {
+    referer.referrals.push(newId);
+    newStu.referredBy = refBy;
+    renderReferrals();
+    showToast('Referral added! ৳200 discount applied ✅');
+  } else {
+    showToast('Already referred! ❌');
+  }
+}
+
+function addStudent() {
+  const name = document.getElementById('newName').value.trim();
+  const cls = parseInt(document.getElementById('newClass').value);
+  const batch = document.getElementById('newBatch').value;
+  const fee = parseInt(document.getElementById('newFee').value) || 2000;
+  const phone = document.getElementById('newPhone').value;
+  const address = document.getElementById('newAddress').value;
+  const ref = document.getElementById('newReferral').value.toUpperCase();
+
+  if(!name) { showToast('নাম দিন! ❌'); return; }
+
+  const id = 'AC-' + String(students.length + 1).padStart(3, '0');
+  const avatars = ['av-blue','av-green','av-gold','av-purple','av-red'];
+  const newStu = { id, name, class: cls, batch, fee, phone, address, paid: false, paidDate: null, referredBy: ref || null, referrals: [], avatar: avatars[students.length % 5], password: '1234' };
+  
+  students.push(newStu);
+  
+  if(ref) {
+    const referer = students.find(s => s.id === ref);
+    if(referer) referer.referrals.push(id);
+  }
+
+  renderStudentsList(students);
+  renderPayments();
+  renderReferrals();
+
+  // Clear form
+  ['newName','newFee','newPhone','newAddress','newReferral'].forEach(f => document.getElementById(f).value = '');
+  
+  showToast(`${name} added! ID: ${id} 🎉`);
+  showScreen('studentsScreen');
+}
+
+function renderMyRoutine(stu) {
+  const container = document.getElementById('myRoutineContent');
+  const batchMap = { 'Science': 'ssc', 'Commerce': 'commerce', 'General': 'class1', 'Humanities': 'ssc' };
+  const myBatch = batchMap[stu.batch] || 'class1';
+  
+  container.innerHTML = `
+    <div style="padding:12px 16px 4px">
+      <div style="background:linear-gradient(135deg,rgba(0,200,255,0.1),rgba(0,255,135,0.05)); border:1px solid rgba(0,200,255,0.2); border-radius:12px; padding:12px; text-align:center">
+        <div style="font-size:12px; color:var(--text-muted)">তোমার Batch</div>
+        <div style="font-family:'Rajdhani',sans-serif; font-size:18px; font-weight:700; color:var(--accent-blue)">${stu.batch} · Class ${stu.class}</div>
+      </div>
+    </div>
+  ` + weeklyRoutine.map(day => {
+    const slots = day.slots.filter(s => s.batch === myBatch || s.batch === 'class1');
+    if(slots.length === 0) return '';
+    return `
+    <div class="routine-day" style="margin-top:10px">
+      <div class="routine-day-header">
+        <div class="day-name">${day.day}</div>
+        ${day.isToday ? '<span class="today-badge">আজ</span>' : ''}
+      </div>
+      ${slots.map(slot => `
+        <div class="subject-slot">
+          <div class="slot-time">${slot.time}</div>
+          <div><div class="slot-subject">${slot.subject}</div><div class="slot-topic">${slot.topic}</div></div>
+        </div>
+      `).join('')}
+    </div>`;
+  }).join('');
+}
+
+function renderMyPayments(stu) {
+  const container = document.getElementById('myPaymentContent');
+  container.innerHTML = `
+    <div style="padding:16px">
+      <div style="background:linear-gradient(135deg,#0d2040,#0d1a30); border:1px solid rgba(255,215,0,0.3); border-radius:14px; padding:16px; margin-bottom:16px">
+        <div style="font-size:12px; color:var(--text-muted); margin-bottom:4px">মাসিক ফি</div>
+        <div style="font-family:'Rajdhani',sans-serif; font-size:32px; font-weight:700; color:var(--accent-gold)">৳${stu.fee}</div>
+        <span class="payment-status ${stu.paid ? 'paid' : 'due'}" style="font-size:13px">${stu.paid ? '✅ এই মাস পরিশোধ হয়েছে' : '⚠️ এই মাস বাকি আছে'}</span>
+      </div>
+    </div>
+    <div class="section-header"><span class="section-title">💳 PAYMENT HISTORY</span></div>
+    ${['May 2026','April 2026','March 2026','February 2026'].map((m, i) => `
+    <div class="payment-row">
+      <div><div class="payment-month">${m}</div><div class="payment-date">${i===0 ? (stu.paid ? 'Paid · '+stu.paidDate : 'Pending') : 'Paid'}</div></div>
+      <div>
+        <div class="payment-amount">৳${stu.fee}</div>
+        <span class="payment-status ${i===0 ? (stu.paid?'paid':'due') : 'paid'}">${i===0 ? (stu.paid?'✅':'⚠️') : '✅'}</span>
+      </div>
+    </div>`).join('')}
+  `;
+}
+
+// Quiz
+function loadQuiz() {
+  const q = quizData[currentQ];
+  document.getElementById('quizQuestion').textContent = q.q;
+  document.getElementById('quizResult').style.display = 'none';
+  answered = false;
+  
+  const opts = document.getElementById('quizOptions');
+  opts.innerHTML = q.options.map((o, i) => `
+    <div class="quiz-option" onclick="answerQuiz(${i}, this)">${String.fromCharCode(65+i)}) ${o}</div>
+  `).join('');
+}
+
+function answerQuiz(idx, el) {
+  if(answered) return;
+  answered = true;
+  const correct = quizData[currentQ].ans;
+  
+  document.querySelectorAll('.quiz-option').forEach((opt, i) => {
+    if(i === correct) opt.classList.add('correct');
+    else if(i === idx && idx !== correct) opt.classList.add('wrong');
+  });
+
+  if(idx === correct) {
+    showToast('সঠিক উত্তর! 🎉');
+    document.getElementById('quizResult').style.display = 'block';
+  } else {
+    showToast('ভুল হয়েছে! সঠিক: ' + quizData[currentQ].options[correct]);
+    setTimeout(nextQuestion, 1500);
+  }
+}
+
+function nextQuestion() {
+  currentQ = (currentQ + 1) % quizData.length;
+  loadQuiz();
+}
+
+// Init
+loadQuiz();
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js')
+      .then(r => console.log('SW registered'))
+      .catch(e => console.log('SW failed:', e));
+  });
+}
+</script>
+</body>
+</html>
