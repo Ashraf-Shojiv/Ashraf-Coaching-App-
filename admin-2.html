@@ -1,0 +1,2672 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#ffd700">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="AC Admin">
+<title>Ashraf Coaching — Admin</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+/* Offline-safe font fallbacks */
+  @font-face {
+    font-family: 'Rajdhani';
+    src: local('Rajdhani'), local('Arial Black'), local('Impact');
+    font-weight: 400 700;
+  }
+  @font-face {
+    font-family: 'Hind Siliguri';
+    src: local('Hind Siliguri'), local('Nirmala UI'), local('Vrinda'), local('Arial');
+    font-weight: 300 700;
+  }
+
+/* Override font families to use system fonts when Google Fonts unavailable */
+
+:root {
+    --bg-dark: #050a12;
+    --bg-card: #0d1b2a;
+    --bg-card2: #0a1520;
+    --accent-green: #00ff87;
+    --accent-blue: #00c8ff;
+    --accent-gold: #ffd700;
+    --accent-purple: #b44fff;
+    --accent-red: #ff3b5c;
+    --text-primary: #e8f4ff;
+    --text-muted: #5a7a9a;
+    --border: #1a3050;
+    --glow-green: 0 0 20px rgba(0,255,135,0.4);
+    --glow-blue: 0 0 20px rgba(0,200,255,0.4);
+    --glow-gold: 0 0 20px rgba(255,215,0,0.4);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'Hind Siliguri', sans-serif;
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Animated background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse at 20% 20%, rgba(0,200,255,0.05) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(0,255,135,0.05) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, rgba(180,79,255,0.03) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ===== SCREENS ===== */
+  .screen { display: none; min-height: 100vh; position: relative; z-index: 1; }
+  .screen.active { display: flex; flex-direction: column; animation: fadeIn 0.3s ease; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ===== LOGIN SCREEN ===== */
+  #loginScreen {
+    background: 
+      linear-gradient(135deg, #050a12 0%, #0a1a2e 50%, #050a12 100%);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .login-logo {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .login-logo .badge {
+    width: 90px;
+    height: 90px;
+    background: linear-gradient(135deg, #0d2a4a, #1a4a7a);
+    border: 2px solid var(--accent-blue);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 15px;
+    font-size: 36px;
+    box-shadow: var(--glow-blue), inset 0 0 20px rgba(0,200,255,0.1);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { box-shadow: var(--glow-blue), inset 0 0 20px rgba(0,200,255,0.1); }
+    50% { box-shadow: 0 0 40px rgba(0,200,255,0.6), inset 0 0 30px rgba(0,200,255,0.2); }
+  }
+
+  .login-logo h1 {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--accent-blue);
+    letter-spacing: 1px;
+    text-shadow: var(--glow-blue);
+  }
+
+  .login-logo p { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+  .login-card {
+    background: linear-gradient(135deg, #0d1b2a, #0a1520);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 24px;
+    width: 100%;
+    max-width: 380px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+
+  .login-tabs {
+    display: flex;
+    background: #060e18;
+    border-radius: 10px;
+    padding: 4px;
+    margin-bottom: 24px;
+    border: 1px solid var(--border);
+  }
+
+  .login-tab {
+    flex: 1;
+    padding: 10px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.3s;
+    color: var(--text-muted);
+  }
+
+  .login-tab.active {
+    background: linear-gradient(135deg, var(--accent-blue), #0055aa);
+    color: white;
+    box-shadow: var(--glow-blue);
+  }
+
+  .form-group { margin-bottom: 16px; }
+
+  .form-group label {
+    display: block;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  .form-group input, .form-group select, .form-group textarea {
+    width: 100%;
+    background: #060e18;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    color: var(--text-primary);
+    font-size: 14px;
+    font-family: 'Hind Siliguri', sans-serif;
+    transition: all 0.3s;
+    outline: none;
+  }
+
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 3px rgba(0,200,255,0.1);
+  }
+
+  .form-group select option { background: #0d1b2a; }
+
+  .btn-primary {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #00c8ff, #0066cc);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: 'Rajdhani', sans-serif;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: var(--glow-blue);
+    text-transform: uppercase;
+  }
+
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,200,255,0.5); }
+  .btn-primary:active { transform: translateY(0); }
+
+  .btn-green {
+    background: linear-gradient(135deg, #00ff87, #00aa55);
+    box-shadow: var(--glow-green);
+    color: #050a12;
+  }
+
+  .btn-gold {
+    background: linear-gradient(135deg, #ffd700, #ff8c00);
+    box-shadow: var(--glow-gold);
+    color: #050a12;
+  }
+
+  .btn-red {
+    background: linear-gradient(135deg, #ff3b5c, #cc0022);
+    color: white;
+  }
+
+  .btn-sm {
+    width: auto;
+    padding: 8px 16px;
+    font-size: 12px;
+    border-radius: 8px;
+  }
+
+  /* ===== TOP NAV ===== */
+  .top-nav {
+    background: linear-gradient(180deg, rgba(5,10,18,0.98), rgba(5,10,18,0.9));
+    border-bottom: 1px solid var(--border);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(10px);
+  }
+
+  .nav-back {
+    width: 36px; height: 36px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 18px;
+  }
+
+  .nav-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--accent-blue);
+  }
+
+  .nav-avatar {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--accent-gold), #ff8c00);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    color: #050a12;
+    cursor: pointer;
+  }
+
+  /* ===== HOME DASHBOARD ===== */
+  .home-header {
+    background: linear-gradient(135deg, #0a1520, #0d2040);
+    padding: 20px 16px 24px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .home-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent-green), var(--accent-blue), transparent);
+  }
+
+  .greeting { font-size: 13px; color: var(--text-muted); margin-bottom: 4px; }
+
+  .user-name {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--accent-gold);
+    text-shadow: var(--glow-gold);
+  }
+
+  .stats-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .stat-pill {
+    background: rgba(0,0,0,0.4);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .stat-pill .val {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--accent-green);
+  }
+
+  /* Menu Grid */
+  .menu-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .menu-card {
+    background: linear-gradient(135deg, var(--bg-card), var(--bg-card2));
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px 16px;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+  }
+
+  .menu-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    opacity: 0.8;
+  }
+
+  .menu-card.green::before { background: linear-gradient(90deg, transparent, var(--accent-green), transparent); }
+  .menu-card.blue::before { background: linear-gradient(90deg, transparent, var(--accent-blue), transparent); }
+  .menu-card.gold::before { background: linear-gradient(90deg, transparent, var(--accent-gold), transparent); }
+  .menu-card.purple::before { background: linear-gradient(90deg, transparent, var(--accent-purple), transparent); }
+  .menu-card.red::before { background: linear-gradient(90deg, transparent, var(--accent-red), transparent); }
+
+  .menu-card:active { transform: scale(0.97); }
+
+  .menu-icon { font-size: 32px; margin-bottom: 8px; }
+
+  .menu-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+
+  .menu-sub { font-size: 11px; color: var(--text-muted); }
+
+  .menu-card.green .menu-title { color: var(--accent-green); }
+  .menu-card.blue .menu-title { color: var(--accent-blue); }
+  .menu-card.gold .menu-title { color: var(--accent-gold); }
+  .menu-card.purple .menu-title { color: var(--accent-purple); }
+  .menu-card.red .menu-title { color: var(--accent-red); }
+
+  .menu-badge {
+    position: absolute;
+    top: 10px; right: 10px;
+    background: var(--accent-red);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 10px;
+  }
+
+  /* ===== BOTTOM NAV ===== */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: rgba(5,10,18,0.97);
+    border-top: 1px solid var(--border);
+    display: flex;
+    z-index: 100;
+    backdrop-filter: blur(10px);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .nav-item {
+    flex: 1;
+    padding: 10px 4px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .nav-item .nav-icon { font-size: 20px; margin-bottom: 3px; }
+  .nav-item .nav-label { font-size: 10px; color: var(--text-muted); font-weight: 600; }
+  .nav-item.active .nav-label { color: var(--accent-blue); }
+  .nav-item.active .nav-icon { filter: drop-shadow(0 0 6px var(--accent-blue)); }
+
+  /* ===== STUDENT CARD ===== */
+  .student-card {
+    background: linear-gradient(135deg, #0d1b2a, #0a1520);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    margin: 0 16px 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .student-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+  }
+
+  .student-card.grade-1::before, .student-card.grade-2::before, .student-card.grade-3::before { background: var(--accent-green); }
+  .student-card.grade-4::before, .student-card.grade-5::before { background: var(--accent-blue); }
+  .student-card.grade-6::before, .student-card.grade-7::before { background: var(--accent-gold); }
+  .student-card.grade-8::before, .student-card.grade-9::before, .student-card.grade-10::before { background: var(--accent-red); }
+
+  .student-card:active { transform: scale(0.98); background: #101e30; }
+
+  .student-avatar {
+    width: 48px; height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .student-info { flex: 1; }
+  .student-name { font-family: 'Rajdhani', sans-serif; font-size: 17px; font-weight: 700; }
+  .student-meta { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+  .student-id-badge {
+    background: rgba(0,0,0,0.5);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 4px 8px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent-blue);
+  }
+
+  .payment-status {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+    margin-top: 4px;
+    display: inline-block;
+  }
+
+  .paid { background: rgba(0,255,135,0.15); color: var(--accent-green); border: 1px solid rgba(0,255,135,0.3); }
+  .due { background: rgba(255,59,92,0.15); color: var(--accent-red); border: 1px solid rgba(255,59,92,0.3); }
+  .partial { background: rgba(255,215,0,0.15); color: var(--accent-gold); border: 1px solid rgba(255,215,0,0.3); }
+
+  /* ===== SECTION HEADER ===== */
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 16px 10px;
+  }
+
+  .section-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--accent-blue);
+    letter-spacing: 0.5px;
+  }
+
+  .section-count {
+    font-size: 12px;
+    color: var(--text-muted);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    padding: 3px 10px;
+    border-radius: 10px;
+  }
+
+  /* ===== SEARCH BAR ===== */
+  .search-bar {
+    margin: 0 16px 12px;
+    position: relative;
+  }
+
+  .search-bar input {
+    width: 100%;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 11px 14px 11px 40px;
+    color: var(--text-primary);
+    font-size: 14px;
+    font-family: 'Hind Siliguri', sans-serif;
+    outline: none;
+    transition: all 0.3s;
+  }
+
+  .search-bar input:focus { border-color: var(--accent-blue); }
+
+  .search-bar .search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 16px;
+  }
+
+  /* ===== DETAIL VIEW ===== */
+  .detail-header {
+    padding: 20px 16px;
+    background: linear-gradient(135deg, #0a1520, #0d2040);
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+  }
+
+  .detail-avatar {
+    width: 70px; height: 70px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0 auto 12px;
+    border: 2px solid;
+  }
+
+  .detail-name { font-family: 'Rajdhani', sans-serif; font-size: 24px; font-weight: 700; }
+  .detail-id { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 16px;
+  }
+
+  .info-item {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px;
+  }
+
+  .info-label { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
+  .info-value { font-family: 'Rajdhani', sans-serif; font-size: 16px; font-weight: 700; color: var(--text-primary); }
+  .info-item.full { grid-column: 1 / -1; }
+
+  /* ===== ROUTINE CARD ===== */
+  .routine-day {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin: 0 16px 10px;
+    overflow: hidden;
+  }
+
+  .routine-day-header {
+    background: linear-gradient(135deg, #0d2040, #0a1530);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .day-name {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--accent-gold);
+  }
+
+  .today-badge {
+    background: var(--accent-green);
+    color: #050a12;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 6px;
+  }
+
+  .subject-slot {
+    padding: 10px 16px;
+    border-bottom: 1px solid rgba(26,48,80,0.5);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .subject-slot:last-child { border-bottom: none; }
+
+  .slot-time {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent-blue);
+    width: 70px;
+    flex-shrink: 0;
+  }
+
+  .slot-subject { font-size: 14px; font-weight: 600; }
+  .slot-topic { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+  /* ===== PAYMENT ===== */
+  .payment-row {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    margin: 0 16px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .payment-month { font-family: 'Rajdhani', sans-serif; font-size: 16px; font-weight: 700; }
+  .payment-date { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .payment-amount { font-family: 'Rajdhani', sans-serif; font-size: 20px; font-weight: 700; color: var(--accent-gold); }
+
+  /* ===== MODAL ===== */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.8);
+    z-index: 200;
+    align-items: flex-end;
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-overlay.active { display: flex; animation: fadeIn 0.2s ease; }
+
+  .modal {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px 20px 0 0;
+    padding: 20px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: slideUp 0.3s ease;
+  }
+
+  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+  .modal-handle {
+    width: 40px; height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    margin: 0 auto 20px;
+  }
+
+  .modal-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--accent-blue);
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  /* ===== FILTER TABS ===== */
+  .filter-tabs {
+    display: flex;
+    gap: 8px;
+    padding: 0 16px 12px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .filter-tab {
+    padding: 7px 14px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+    color: var(--text-muted);
+  }
+
+  .filter-tab.active {
+    background: linear-gradient(135deg, var(--accent-blue), #0055aa);
+    border-color: var(--accent-blue);
+    color: white;
+    box-shadow: var(--glow-blue);
+  }
+
+  /* ===== TOAST ===== */
+  .toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-100px);
+    background: linear-gradient(135deg, #0d2040, #0a1530);
+    border: 1px solid var(--accent-green);
+    border-radius: 12px;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent-green);
+    z-index: 999;
+    transition: transform 0.3s ease;
+    white-space: nowrap;
+    box-shadow: var(--glow-green);
+  }
+
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ===== REFERRAL ===== */
+  .referral-card {
+    background: linear-gradient(135deg, #0d2040, #1a0d40);
+    border: 1px solid rgba(180,79,255,0.3);
+    border-radius: 16px;
+    padding: 16px;
+    margin: 0 16px 12px;
+  }
+
+  .referral-code {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent-purple);
+    text-align: center;
+    letter-spacing: 4px;
+    text-shadow: 0 0 20px rgba(180,79,255,0.5);
+    margin: 10px 0;
+  }
+
+  /* ===== SCROLLABLE CONTENT ===== */
+  .scroll-content {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 80px;
+    scrollbar-width: none;
+  }
+
+  .scroll-content::-webkit-scrollbar { display: none; }
+
+  /* ===== PAGE TITLE BAR ===== */
+  .page-top {
+    background: linear-gradient(180deg, rgba(5,10,18,0.98), transparent);
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    backdrop-filter: blur(10px);
+  }
+
+  .page-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: 0.5px;
+    flex: 1;
+  }
+
+  /* ===== ANNOUNCEMENT ===== */
+  .announcement-card {
+    background: linear-gradient(135deg, rgba(0,200,255,0.1), rgba(0,255,135,0.05));
+    border: 1px solid rgba(0,200,255,0.2);
+    border-radius: 14px;
+    padding: 14px;
+    margin: 0 16px 12px;
+  }
+
+  .ann-date { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; }
+  .ann-text { font-size: 14px; line-height: 1.6; }
+
+  /* Home content area */
+  .home-content { flex: 1; overflow-y: auto; padding-bottom: 80px; scrollbar-width: none; }
+  .home-content::-webkit-scrollbar { display: none; }
+
+  /* Quiz */
+  .quiz-option {
+    background: var(--bg-card);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    margin: 0 16px 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+  }
+  .quiz-option:active { transform: scale(0.98); }
+  .quiz-option.correct { border-color: var(--accent-green); background: rgba(0,255,135,0.1); color: var(--accent-green); }
+  .quiz-option.wrong { border-color: var(--accent-red); background: rgba(255,59,92,0.1); color: var(--accent-red); }
+
+  .divider { height: 1px; background: var(--border); margin: 4px 16px 12px; }
+
+  /* Colors for avatars */
+  .av-blue { background: linear-gradient(135deg, #003366, #006699); color: var(--accent-blue); border: 1px solid var(--accent-blue); }
+  .av-green { background: linear-gradient(135deg, #003322, #006644); color: var(--accent-green); border: 1px solid var(--accent-green); }
+  .av-gold { background: linear-gradient(135deg, #332200, #664400); color: var(--accent-gold); border: 1px solid var(--accent-gold); }
+  .av-purple { background: linear-gradient(135deg, #220033, #440066); color: var(--accent-purple); border: 1px solid var(--accent-purple); }
+  .av-red { background: linear-gradient(135deg, #330011, #660022); color: var(--accent-red); border: 1px solid var(--accent-red); }
+</style>
+</head>
+<body>
+
+<!-- ===== LOGIN ===== -->
+<div id="loginScreen" class="screen active">
+  <div class="login-logo">
+    <div class="badge">🎓</div>
+    <h1>ASHRAF COACHING</h1>
+    <p>Smart Learning Center, Bayazid, Chittagong</p>
+  </div>
+  <div class="login-card">
+    <div class="login-tabs">
+      <div class="login-tab active" onclick="switchLoginTab('admin')">Admin</div>
+      <div class="login-tab" onclick="switchLoginTab('student')">Student</div>
+      <div class="login-tab" onclick="switchLoginTab('parent')">Parent</div>
+    </div>
+    <div id="adminLogin">
+      <div class="form-group"><label>USERNAME</label><input type="text" id="adminUser" placeholder="admin" value="admin"></div>
+      <div class="form-group"><label>PASSWORD</label><input type="password" id="adminPass" placeholder="••••••" value="1234"></div>
+      <button class="btn-primary btn-gold" onclick="login('admin')">🛡️ ADMIN LOGIN</button>
+    </div>
+    <div id="studentLogin" style="display:none">
+      <div class="form-group"><label>COACHING ID</label><input type="text" id="stuId" placeholder="AC-001"></div>
+      <div class="form-group"><label>PASSWORD</label><input type="password" id="stuPass" placeholder="••••••"></div>
+      <button class="btn-primary btn-green" onclick="login('student')">🎓 STUDENT LOGIN</button>
+    </div>
+    <div id="parentLogin" style="display:none">
+      <div class="form-group"><label>COACHING ID (সন্তানের)</label><input type="text" id="parId" placeholder="AC-001"></div>
+      <div class="form-group"><label>GUARDIAN MOBILE</label><input type="tel" id="parPhone" placeholder="01XXXXXXXXX"></div>
+      <button class="btn-primary btn-gold" onclick="login('parent')">👨‍👩‍👧 PARENT LOGIN</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ADMIN DASHBOARD ===== -->
+<div id="adminDash" class="screen">
+  <div class="home-header">
+    <div class="greeting">Welcome back,</div>
+    <div class="user-name">Ashraf Sir 🎯</div>
+    <div class="stats-row">
+      <div class="stat-pill">👨‍🎓 <span class="val" id="totalStudents">0</span> Students</div>
+      <div class="stat-pill">✅ <span class="val" id="todayPresentCnt">0</span> Present</div>
+      <div class="stat-pill">⚠️ <span class="val" id="dueCnt">0</span> Due</div>
+    </div>
+  </div>
+  <div class="home-content">
+    <div style="padding:0 16px 14px">
+      <div style="background:linear-gradient(135deg,#0d2040,#0d1a30);border:1px solid rgba(255,215,0,0.3);border-radius:14px;padding:14px;display:flex;justify-content:space-between">
+        <div><div style="font-size:11px;color:var(--text-muted)">এই মাসের আয়</div><div style="font-family:'Rajdhani',sans-serif;font-size:24px;font-weight:700;color:var(--accent-gold)" id="dashIncome">৳0</div></div>
+        <div style="text-align:right"><div style="font-size:11px;color:var(--text-muted)">বকেয়া</div><div style="font-family:'Rajdhani',sans-serif;font-size:24px;font-weight:700;color:var(--accent-red)" id="dashDue">৳0</div></div>
+      </div>
+    </div>
+    <div class="section-header"><span class="section-title">⚡ QUICK ACCESS</span></div>
+    <div class="menu-grid">
+      <div class="menu-card green" onclick="showScreen('studentsScreen')"><div class="menu-icon">👨‍🎓</div><div class="menu-title">STUDENTS</div><div class="menu-sub">সকল ছাত্রছাত্রী</div></div>
+      <div class="menu-card blue" onclick="showScreen('attendanceScreen')"><div class="menu-icon">📋</div><div class="menu-title">ATTENDANCE</div><div class="menu-sub">হাজিরা নিন</div></div>
+      <div class="menu-card gold" onclick="showScreen('paymentScreen')"><div class="menu-icon">💳</div><div class="menu-title">PAYMENT</div><div class="menu-sub">ফি ট্র্যাকিং</div></div>
+      <div class="menu-card purple" onclick="showScreen('leadsScreen')"><div class="menu-icon">📞</div><div class="menu-title">LEADS</div><div class="menu-sub">Prospect tracking</div></div>
+      <div class="menu-card red" onclick="showScreen('reminderScreen')"><div class="menu-icon">📲</div><div class="menu-title">REMINDER</div><div class="menu-sub">WhatsApp / Call</div></div>
+      <div class="menu-card blue" onclick="showScreen('routineScreen')"><div class="menu-icon">📅</div><div class="menu-title">ROUTINE</div><div class="menu-sub">ক্লাস শিডিউল</div></div>
+      <div class="menu-card green" onclick="showScreen('referralScreen')"><div class="menu-icon">🎁</div><div class="menu-title">REFERRAL</div><div class="menu-sub">৳100/মাস discount</div></div>
+      <div class="menu-card gold" onclick="showScreen('addStudentScreen')"><div class="menu-icon">➕</div><div class="menu-title">ADD STUDENT</div><div class="menu-sub">নতুন ভর্তি</div></div>
+      <div class="menu-card blue" onclick="showScreen('analyticsScreen');renderAnalyticsScreen()"><div class="menu-icon">📈</div><div class="menu-title">ANALYTICS</div><div class="menu-sub">Income & Charts</div></div>
+      <div class="menu-card green" onclick="showScreen('broadcastScreen');renderBroadcast()"><div class="menu-icon">📲</div><div class="menu-title">BROADCAST</div><div class="menu-sub">সবাইকে WhatsApp</div></div>
+      <div class="menu-card purple" onclick="showScreen('noticeScreen');renderNotices()"><div class="menu-icon">📢</div><div class="menu-title">NOTICE</div><div class="menu-sub">Notice publish করুন</div></div>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <div class="nav-item active"><div class="nav-icon">🏠</div><div class="nav-label">হোম</div></div>
+    <div class="nav-item" onclick="showScreen('studentsScreen')"><div class="nav-icon">👥</div><div class="nav-label">Students</div></div>
+    <div class="nav-item" onclick="showScreen('attendanceScreen')"><div class="nav-icon">📋</div><div class="nav-label">Attendance</div></div>
+    <div class="nav-item" onclick="showScreen('paymentScreen')"><div class="nav-icon">💰</div><div class="nav-label">Payment</div></div>
+    <div class="nav-item" onclick="logout()"><div class="nav-icon">🚪</div><div class="nav-label">Logout</div></div>
+  </div>
+</div>
+
+<!-- ===== STUDENTS LIST ===== -->
+<div id="studentsScreen" class="screen">
+  <div class="page-top">
+    <div class="nav-back" onclick="showScreen('adminDash')">←</div>
+    <div class="page-title">ALL STUDENTS</div>
+    <div style="font-size:20px;cursor:pointer" onclick="showScreen('addStudentScreen')">➕</div>
+  </div>
+  <div class="scroll-content">
+    <div class="search-bar"><span class="search-icon">🔍</span><input type="text" placeholder="নাম বা ID দিয়ে খুঁজুন..." oninput="filterStudents(this.value)"></div>
+    <div class="filter-tabs">
+      <div class="filter-tab active" onclick="filterByClass(this,'all')">সব</div>
+      <div class="filter-tab" onclick="filterByClass(this,'1')">Class 1-3</div>
+      <div class="filter-tab" onclick="filterByClass(this,'4')">Class 4-5</div>
+      <div class="filter-tab" onclick="filterByClass(this,'6')">Class 6-7</div>
+      <div class="filter-tab" onclick="filterByClass(this,'8')">Class 8-10</div>
+    </div>
+    <div id="studentsList"></div>
+  </div>
+</div>
+
+<!-- ===== STUDENT DETAIL ===== -->
+<div id="studentDetail" class="screen">
+  <div class="page-top">
+    <div class="nav-back" onclick="showScreen('studentsScreen')">←</div>
+    <div class="page-title">STUDENT PROFILE</div>
+  </div>
+  <div class="scroll-content" id="studentDetailContent"></div>
+</div>
+
+<!-- ===== ATTENDANCE ===== -->
+<div id="attendanceScreen" class="screen">
+  <div class="page-top">
+    <div class="nav-back" onclick="showScreen('adminDash')">←</div>
+    <div class="page-title">📋 ATTENDANCE</div>
+  </div>
+  <div class="scroll-content">
+    <div style="padding:12px 16px">
+      <div style="display:flex;align-items:center;gap:10px;background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:10px">
+        <span style="font-size:14px;color:var(--text-muted);flex-shrink:0">📅 তারিখ:</span>
+        <input type="date" id="attDate" onchange="changeAttDate()" style="flex:1;background:transparent;border:none;color:var(--accent-blue);font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;outline:none">
+      </div>
+      <div style="font-size:13px;font-weight:600;text-align:center;padding:4px" id="attSummary"></div>
+    </div>
+    <div id="attendanceList"></div>
+  </div>
+</div>
+
+<!-- ===== PAYMENT ===== -->
+<div id="paymentScreen" class="screen">
+  <div class="page-top">
+    <div class="nav-back" onclick="showScreen('adminDash')">←</div>
+    <div class="page-title">PAYMENT RECORDS</div>
+  </div>
+  <div class="scroll-content">
+    <div style="padding:0 16px 12px">
+      <div style="background:linear-gradient(135deg,#0d2040,#0d1a30);border:1px solid rgba(255,215,0,0.3);border-radius:14px;padding:16px;display:flex;justify-content:space-between;align-items:center">
+        <div><div style="font-size:12px;color:var(--text-muted)">এই মাসের আয়</div><div style="font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--accent-gold)" id="totalIncome">৳0</div></div>
+        <div><div style="font-size:12px;color:var(--text-muted)">বকেয়া মোট</div><div style="font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--accent-red)" id="totalDueAmount">৳0</div></div>
+      </div>
+    </div>
+    <div class="section-header"><span class="section-title">💳 PAID</span></div>
+    <div id="paymentList"></div>
+    <div class="section-header" style="margin-top:8px"><span class="section-title">⚠️ DUE</span></div>
+    <div id="dueList"></div>
+  </div>
+</div>
+
+<!-- ===== RECEIPT ===== -->
+<div id="receiptScreen" class="screen">
+  <div class="page-top">
+    <div class="nav-back" onclick="showScreen('paymentScreen')">←</div>
+    <div class="page-title">🧾 RECEIPT</div>
+  </div>
+  <div class="scroll-content" id="receiptContent"></div>
+</div>
+
+<!-- ===== REMINDER ===== -->
+<div id="reminderScreen" class="screen">
+  <div class="page-top">
+    <div class="nav-back" onclick="showScreen('adminDash')">←</div>
+    <div class="page-title">📲 REMINDER</div>
+  </div>
+  <div class="scroll-content">
+    <div class="filter-tabs">
+      <div class="filter-tab active" onclick="filterReminder(this,'due')">Due Students</div>
+      <div class="filter-tab" onclick="filterReminder(this,'all')">সবাই</div>
+    </div>
+    <div style="padding:0 16px 10px">
+      <div style="background:linear-gradient(135deg,rgba(0,200,255,0.08),rgba(0,255,135,0.04));border:1px solid rgba(0,200,255,0.2);border-radius:12px;padding:12px;font-size:13px;color:var(--text-muted);line-height:1.6">
+        💡 <strong style="color:var(--accent-blue)">WhatsApp</strong> চাপলে message খুলবে। <strong style="color:var(--accent-green)">Call</strong> চাপলে ডায়ালার খুলবে।
+      </div>
+    </div>
+    <div id="reminderList"></div>
+  </div>
+</div>
+
+<!-- ===== ROUTINE ===== -->
+<div id="routineScreen" class="screen">
+  <div class="page-top">
+    <div class="nav-back" onclick="showScreen('adminDash')">←</div>
+    <div class="page-title">WEEKLY ROUTINE</div>
+  </div>
+  <div class="scroll-content">
+    <div class="filter-tabs">
+      <div class="filter-tab active" onclick="filterRoutine(this,'all')">সব</div>
+      <div class="filter-tab" onclick="filterRoutine(this,'class1')">Class 1-5</div>
+      <div class="filter-tab" onclick="filterRoutine(this,'ssc')">SSC</div>
+      <div class="filter-tab" onclick="filterRoutine(this,'commerce')">Commerce</div>
+    </div>
+    <div id="routineList"></div>
+  </div>
+</div>
+
+<!-- ===== REFERRAL ===== -->
+<div id="referralScreen" class="screen">
+  <div class="page-top">
+    <div class="nav-back" onclick="showScreen('adminDash')">←</div>
+    <div class="page-title">REFERRAL SYSTEM</div>
+  </div>
+  <div class="scroll-content">
+    <div style="padding:16px">
+      <div style="background:linear-gradient(135deg,rgba(180,79,255,0.1),rgba(0,200,255,0.05));border:1px solid rgba(180,79,255,0.3);border-radius:16px;padding:16px;text-align:center;margin-bottom:4px">
+        <div style="font-size:13px;color:var(--text-muted);margin-bottom:6px">১ জন refer করলে প্রতি মাসে</div>
+        <div style="font-family:'Rajdhani',sans-serif;font-size:32px;font-weight:700;color:var(--accent-purple)">৳100 DISCOUNT</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:6px">যতদিন referred student থাকবে, ততদিন চলবে</div>
+      </div>
+    </div>
+    <div class="section-header"><span class="section-title">🏆 TOP REFERRERS</span></div>
+    <div id="referralList"></div>
+    <div class="section-header" style="margin-top:8px"><span class="section-title">➕ ADD REFERRAL</span></div>
+    <div style="padding:0 16px 16px">
+      <div class="form-group"><label>নতুন Student ID</label><input type="text" id="newRefStudent" placeholder="AC-007"></div>
+      <div class="form-group"><label>Referred By (Student ID)</label><input type="text" id="refByStudent" placeholder="AC-001"></div>
+      <button class="btn-primary" style="background:linear-gradient(135deg,#b44fff,#6600cc)" onclick="addReferral()">ADD REFERRAL</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LEADS ===== -->
+<div id="leadsScreen" class="screen">
+  <div class="page-top">
+    <div class="nav-back" onclick="showScreen('adminDash')">←</div>
+    <div class="page-title">📞 LEAD TRACKING</div>
+    <div style="font-size:20px;cursor:pointer" onclick="showScreen('addLeadScreen')">➕</div>
+  </div>
+  <div class="scroll-content">
+    <div class="filter-tabs">
+      <div class="filter-tab active" onclick="filterLeads(this,'all')">সব</div>
+      <div class="filter-tab" onclick="filterLeads(this,'new')">🆕 New</div>
+      <div class="filter-tab" onclick="filterLeads(this,'contacted')">📞 Contacted</div>
+      <div class="filter-tab" onclick="filterLeads(this,'followup')">🔄 Follow-up</div>
+      <div class="filter-tab" onclick="filterLeads(this,'admitted')">✅ Admitted</div>
+    </div>
+    <div id="leadsList"></div>
+  </div>
+</div>
+
+<!-- ===== ADD LEAD ===== -->
+<div id="addLeadScreen" class="screen">
+  <div class="page-top">
+    <div class="nav-back" onclick="showScreen('leadsScreen')">←</div>
+    <div class="page-title">NEW LEAD</div>
+  </div>
+  <div class="scroll-content">
+    <div style="padding:0 16px 16px">
+      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:16px">
+        <div style="font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--accent-purple);margin-bottom:12px">📞 LEAD INFORMATION</div>
+        <div class="form-group"><label>পূর্ণ নাম *</label><input type="text" id="leadName" placeholder="Arif Ahmed"></div>
+        <div class="form-group"><label>ফোন নম্বর *</label><input type="tel" id="leadPhone" placeholder="01XXXXXXXXX"></div>
+        <div class="form-group"><label>যে Class-এ ভর্তি হতে চায়</label>
+          <select id="leadClass" style="width:100%;background:#060e18;border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text-primary);font-size:14px;font-family:'Hind Siliguri',sans-serif;outline:none">
+            <option value="1">Class 1</option><option value="2">Class 2</option><option value="3">Class 3</option>
+            <option value="4">Class 4</option><option value="5">Class 5</option><option value="6">Class 6</option>
+            <option value="7">Class 7</option><option value="8">Class 8</option><option value="9">Class 9</option>
+            <option value="10">Class 10 (SSC)</option>
+          </select>
+        </div>
+        <div class="form-group"><label>কোথা থেকে জেনেছে</label>
+          <select id="leadSource" style="width:100%;background:#060e18;border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text-primary);font-size:14px;font-family:'Hind Siliguri',sans-serif;outline:none">
+            <option>Facebook</option><option>Referral</option><option>Walk-in</option><option>WhatsApp</option><option>Other</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Note</label><input type="text" id="leadNote" placeholder="কিছু জানতে চেয়েছে..."></div>
+        <button class="btn-primary" style="background:linear-gradient(135deg,#b44fff,#6600cc)" onclick="addLead()">➕ ADD LEAD</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ADD STUDENT ===== -->
+<div id="addStudentScreen" class="screen">
+  <div class="page-top">
+    <div class="nav-back" onclick="showScreen('studentsScreen')">←</div>
+    <div class="page-title">NEW STUDENT</div>
+  </div>
+  <div class="scroll-content">
+    <div style="padding:0 16px 16px">
+      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:16px">
+        <div style="font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--accent-blue);margin-bottom:12px">📋 STUDENT INFORMATION</div>
+        <div class="form-group"><label>পূর্ণ নাম *</label><input type="text" id="newName" placeholder="Mohammad Rahim"></div>
+        <div class="form-group"><label>ক্লাস *</label>
+          <select id="newClass" style="width:100%;background:#060e18;border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text-primary);font-size:14px;font-family:'Hind Siliguri',sans-serif;outline:none">
+            <option value="1">Class 1</option><option value="2">Class 2</option><option value="3">Class 3</option>
+            <option value="4">Class 4</option><option value="5">Class 5</option><option value="6">Class 6</option>
+            <option value="7">Class 7</option><option value="8">Class 8</option><option value="9">Class 9</option>
+            <option value="10">Class 10 (SSC)</option>
+          </select>
+        </div>
+        <div class="form-group"><label>বিভাগ *</label>
+          <select id="newBatch" style="width:100%;background:#060e18;border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text-primary);font-size:14px;font-family:'Hind Siliguri',sans-serif;outline:none">
+            <option>General</option><option>Science</option><option>Commerce</option><option>Humanities</option>
+          </select>
+        </div>
+        <div class="form-group"><label>মাসিক ফি (৳) *</label><input type="number" id="newFee" placeholder="2500"></div>
+        <div class="form-group"><label>Student ফোন *</label><input type="tel" id="newPhone" placeholder="01XXXXXXXXX"></div>
+        <div class="form-group"><label>Guardian-এর নাম *</label><input type="text" id="newGuardianName" placeholder="Abdul Rahim"></div>
+        <div class="form-group"><label>Guardian ফোন *</label><input type="tel" id="newGuardianPhone" placeholder="01XXXXXXXXX"></div>
+        <div class="form-group"><label>ঠিকানা</label><textarea id="newAddress" rows="2" placeholder="Bayazid, Chittagong" style="width:100%;background:#060e18;border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text-primary);font-size:14px;outline:none;resize:none;font-family:'Hind Siliguri',sans-serif"></textarea></div>
+        <div class="form-group"><label>Referred By (Optional)</label><input type="text" id="newReferral" placeholder="AC-XXX"></div>
+        <button class="btn-primary btn-green" onclick="addStudent()">✅ ADD STUDENT</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== QUIZ ===== -->
+<div id="quizScreen" class="screen">
+  <div class="page-top">
+    <div class="nav-back" onclick="showScreen('studentDash')">←</div>
+    <div class="page-title">MCQ QUIZ</div>
+  </div>
+  <div class="scroll-content">
+    <div style="padding:16px">
+      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:16px">
+        <div style="font-size:12px;color:var(--accent-blue);font-weight:700;margin-bottom:8px" id="quizSubject">SCIENCE · SSC</div>
+        <div style="font-size:16px;font-weight:600;line-height:1.6" id="quizQuestion">লোড হচ্ছে...</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:8px" id="quizNum">প্রশ্ন 1 / 5</div>
+      </div>
+    </div>
+    <div id="quizOptions"></div>
+    <div style="padding:0 16px;display:none" id="quizResult">
+      <div style="background:linear-gradient(135deg,rgba(0,255,135,0.1),rgba(0,200,255,0.05));border:1px solid rgba(0,255,135,0.3);border-radius:14px;padding:16px;text-align:center">
+        <div style="font-size:32px;margin-bottom:8px">🎉</div>
+        <div style="font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--accent-green)">CORRECT!</div>
+      </div>
+      <button class="btn-primary" style="margin-top:12px" onclick="nextQuestion()">পরের প্রশ্ন →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== STUDENT DASHBOARD ===== -->
+<div id="studentDash" class="screen">
+  <div class="home-header">
+    <div class="greeting">আমার Dashboard</div>
+    <div class="user-name" id="stuDashName">Student 📚</div>
+    <div class="stats-row">
+      <div class="stat-pill" id="stuIdPill">🆔 AC-001</div>
+      <div class="stat-pill" id="stuClassPill">📚 Class 9</div>
+      <div class="stat-pill" id="stuFeePill">✅ Paid</div>
+    </div>
+  </div>
+  <div class="home-content">
+    <div class="menu-grid">
+      <div class="menu-card blue" onclick="showScreen('myRoutineScreen')"><div class="menu-icon">📅</div><div class="menu-title">MY ROUTINE</div><div class="menu-sub">আমার রুটিন</div></div>
+      <div class="menu-card green" onclick="showScreen('myAttendanceScreen')"><div class="menu-icon">📋</div><div class="menu-title">ATTENDANCE</div><div class="menu-sub">আমার হাজিরা</div></div>
+      <div class="menu-card gold" onclick="showScreen('myPaymentScreen')"><div class="menu-icon">💰</div><div class="menu-title">MY PAYMENT</div><div class="menu-sub">ফি + Receipt</div></div>
+      <div class="menu-card red" onclick="showScreen('myProgressScreen')"><div class="menu-icon">📊</div><div class="menu-title">MY PROGRESS</div><div class="menu-sub">আমার results</div></div>
+      <div class="menu-card purple" onclick="showScreen('myReferralScreen')"><div class="menu-icon">🎁</div><div class="menu-title">REFER & EARN</div><div class="menu-sub">Discount পান</div></div>
+      <div class="menu-card blue" onclick="showScreen('quizScreen')"><div class="menu-icon">📝</div><div class="menu-title">QUIZ</div><div class="menu-sub">MCQ Practice</div></div>
+    </div>
+    <div class="section-header"><span class="section-title">📢 NOTICE</span></div>
+    <div class="announcement-card">
+      <div class="ann-date" id="noticeDateStu"></div>
+      <div class="ann-text">আগামীকাল SSC Science Batch-এর বিশেষ ক্লাস সকাল ৯টায়। সবাইকে নোটবুক আনতে হবে।</div>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <div class="nav-item active"><div class="nav-icon">🏠</div><div class="nav-label">হোম</div></div>
+    <div class="nav-item" onclick="showScreen('myRoutineScreen')"><div class="nav-icon">📅</div><div class="nav-label">Routine</div></div>
+    <div class="nav-item" onclick="showScreen('myAttendanceScreen')"><div class="nav-icon">📋</div><div class="nav-label">Attendance</div></div>
+    <div class="nav-item" onclick="showScreen('myProgressScreen')"><div class="nav-icon">📊</div><div class="nav-label">Progress</div></div>
+    <div class="nav-item" onclick="logout()"><div class="nav-icon">🚪</div><div class="nav-label">Logout</div></div>
+  </div>
+</div>
+
+<!-- Student sub-screens -->
+<div id="myRoutineScreen" class="screen">
+  <div class="page-top"><div class="nav-back" onclick="showScreen('studentDash')">←</div><div class="page-title">MY ROUTINE</div></div>
+  <div class="scroll-content" id="myRoutineContent"></div>
+</div>
+
+<div id="myAttendanceScreen" class="screen">
+  <div class="page-top"><div class="nav-back" onclick="showScreen('studentDash')">←</div><div class="page-title">MY ATTENDANCE</div></div>
+  <div class="scroll-content" id="myAttendanceContent"></div>
+</div>
+
+<div id="myPaymentScreen" class="screen">
+  <div class="page-top"><div class="nav-back" onclick="showScreen('studentDash')">←</div><div class="page-title">MY PAYMENTS</div></div>
+  <div class="scroll-content" id="myPaymentContent"></div>
+</div>
+
+<div id="myProgressScreen" class="screen">
+  <div class="page-top"><div class="nav-back" onclick="showScreen('studentDash')">←</div><div class="page-title">📊 MY PROGRESS</div></div>
+  <div class="scroll-content" id="myProgressContent"></div>
+</div>
+
+<div id="myReferralScreen" class="screen">
+  <div class="page-top"><div class="nav-back" onclick="showScreen('studentDash')">←</div><div class="page-title">REFER & EARN</div></div>
+  <div class="scroll-content">
+    <div style="padding:20px;text-align:center">
+      <div style="font-size:48px;margin-bottom:12px">🎁</div>
+      <div style="font-size:14px;color:var(--text-muted);margin-bottom:8px;line-height:1.7">বন্ধুকে Ashraf Coaching-এ ভর্তি করালে<br><strong style="color:var(--accent-purple)">প্রতি মাসে ৳100 discount!</strong><br>যতদিন বন্ধু থাকবে, ততদিন চলবে।</div>
+      <div style="font-size:13px;color:var(--text-muted);margin-bottom:8px">তোমার Referral Code</div>
+      <div class="referral-code" id="myRefCode">AC-001</div>
+      <button class="btn-primary" style="margin-top:14px;background:linear-gradient(135deg,#b44fff,#6600cc)" onclick="copyRefCode()">📋 CODE COPY করুন</button>
+    </div>
+    <div style="padding:0 16px 20px">
+      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:14px">
+        <div style="font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:var(--accent-gold);margin-bottom:10px">তোমার Referrals ও Savings</div>
+        <div id="myReferralDetail" style="font-size:13px;color:var(--text-muted)">লোড হচ্ছে...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PARENT DASHBOARD ===== -->
+<div id="parentDash" class="screen">
+  <div class="home-header">
+    <div class="greeting">অভিভাবক Dashboard</div>
+    <div class="user-name" id="parDashName">Guardian 👨‍👩‍👧</div>
+    <div class="stats-row"><div class="stat-pill" id="parStudentId">🆔 ---</div></div>
+  </div>
+  <div class="home-content" id="parentDashContent" style="padding-bottom:80px"></div>
+  <div class="bottom-nav">
+    <div class="nav-item active"><div class="nav-icon">🏠</div><div class="nav-label">হোম</div></div>
+    <div class="nav-item" onclick="logout()"><div class="nav-icon">🚪</div><div class="nav-label">Logout</div></div>
+  </div>
+</div>
+
+
+<!-- ===== BROADCAST SCREEN ===== -->
+<div id="broadcastScreen" class="screen">
+  <div class="page-top">
+    <div class="nav-back" onclick="showScreen('adminDash')">←</div>
+    <div class="page-title">📲 BROADCAST</div>
+  </div>
+  <div class="scroll-content" id="broadcastContent"></div>
+</div>
+
+<!-- ===== ANALYTICS SCREEN ===== -->
+<div id="analyticsScreen" class="screen">
+  <div class="page-top">
+    <div class="nav-back" onclick="showScreen('adminDash')">←</div>
+    <div class="page-title">📊 ANALYTICS</div>
+  </div>
+  <div class="scroll-content" id="analyticsContent"></div>
+</div>
+
+<!-- ===== NOTICE SCREEN ===== -->
+<div id="noticeScreen" class="screen">
+  <div class="page-top">
+    <div class="nav-back" onclick="showScreen('adminDash')">←</div>
+    <div class="page-title">📢 NOTICE</div>
+    <div style="font-size:20px;cursor:pointer" onclick="showAddNotice()">➕</div>
+  </div>
+  <div class="scroll-content">
+    <div id="noticeList"></div>
+  </div>
+</div>
+
+<!-- Add Notice Modal -->
+<div class="modal-overlay" id="noticeModal" onclick="if(event.target===this)el('noticeModal').classList.remove('active')">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">📢 নতুন Notice</div>
+    <div class="form-group">
+      <label>NOTICE TEXT</label>
+      <textarea id="newNoticeText" rows="5" placeholder="আগামীকাল..." style="width:100%;background:#060e18;border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text-primary);font-size:14px;outline:none;resize:none;font-family:Hind Siliguri,sans-serif"></textarea>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn-primary btn-green" onclick="addNotice()">📢 Publish</button>
+      <button class="btn-primary btn-sm" style="background:#1a3050" onclick="el('noticeModal').classList.remove('active')">বাতিল</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirm Modal -->
+<div class="modal-overlay" id="deleteModal" onclick="if(event.target===this)el('deleteModal').classList.remove('active')">
+  <div class="modal" id="deleteModalContent"></div>
+</div>
+
+<!-- ===== LEAD MODAL ===== -->
+<div class="modal-overlay" id="leadModal" onclick="if(event.target===this)closeLead()">
+  <div class="modal" id="leadModalContent"></div>
+</div>
+
+<!-- PWA Install Banner -->
+<div id="installBanner" style="display:none;position:fixed;bottom:90px;left:16px;right:16px;background:linear-gradient(135deg,#0d2040,#0a1530);border:1px solid #00c8ff;border-radius:14px;padding:14px 16px;z-index:150;box-shadow:0 0 20px rgba(0,200,255,0.3)">
+  <div style="display:flex;align-items:center;gap:12px;justify-content:space-between">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="font-size:28px">📲</span>
+      <div>
+        <div style="font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;color:#00c8ff">Home Screen-এ Add করুন</div>
+        <div style="font-size:11px;color:#5a7a9a;margin-top:2px">App-এর মতো ব্যবহার করুন, offline-ও চলবে</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;flex-shrink:0">
+      <button onclick="installApp()" style="background:linear-gradient(135deg,#00c8ff,#0066cc);border:none;border-radius:8px;padding:8px 14px;color:white;font-size:12px;font-weight:700;cursor:pointer">Install</button>
+      <button onclick="document.getElementById('installBanner').style.display='none'" style="background:#1a3050;border:none;border-radius:8px;padding:8px 10px;color:#5a7a9a;font-size:12px;cursor:pointer">✕</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+<script>
+// ASHRAF COACHING & SMART LEARNING
+// Complete App Script - Clean Version
+
+// ===== PWA =====
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', function(e) {
+  e.preventDefault();
+  deferredPrompt = e;
+  var b = document.getElementById('installBanner');
+  if (b) b.style.display = 'block';
+});
+function installApp() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(function() {
+      deferredPrompt = null;
+      var b = document.getElementById('installBanner');
+      if (b) b.style.display = 'none';
+    });
+  } else {
+    alert('iOS: Share ⬆️ → Add to Home Screen চাপুন');
+  }
+}
+window.addEventListener('appinstalled', function() {
+  var b = document.getElementById('installBanner');
+  if (b) b.style.display = 'none';
+});
+
+// ===== STORAGE =====
+function saveData() {
+  try {
+    localStorage.setItem('ac_students', JSON.stringify(students));
+    localStorage.setItem('ac_attendance', JSON.stringify(attendance));
+    localStorage.setItem('ac_progress', JSON.stringify(progressData));
+    localStorage.setItem('ac_leads', JSON.stringify(leads));
+  } catch(e) {}
+}
+function loadData() {
+  try {
+    var s = localStorage.getItem('ac_students');
+    var a = localStorage.getItem('ac_attendance');
+    var p = localStorage.getItem('ac_progress');
+    var l = localStorage.getItem('ac_leads');
+    if (s) students = JSON.parse(s);
+    if (a) attendance = JSON.parse(a);
+    if (p) progressData = JSON.parse(p);
+    if (l) leads = JSON.parse(l);
+  } catch(e) {}
+}
+
+// ===== DATA =====
+var students = [
+  { id:'AC-001', name:'Mohammad Rahim', class:9, batch:'Science', fee:2500, phone:'01712345678', guardianName:'Abdul Rahim', guardianPhone:'01712345679', address:'Bayazid, Ctg', paid:true, paidDate:'2026-05-01', referredBy:null, referrals:['AC-004'], avatar:'av-blue', password:'1234', joinDate:'2026-01-01' },
+  { id:'AC-002', name:'Fatema Khatun', class:7, batch:'General', fee:2000, phone:'01823456789', guardianName:'Karim Mia', guardianPhone:'01823456780', address:'Oxygen, Ctg', paid:true, paidDate:'2026-05-02', referredBy:'AC-001', referrals:[], avatar:'av-green', password:'1234', joinDate:'2026-01-15' },
+  { id:'AC-003', name:'Hasan Ali', class:10, batch:'Science', fee:3000, phone:'01934567890', guardianName:'Ali Hossain', guardianPhone:'01934567891', address:'Bayazid, Ctg', paid:false, paidDate:null, referredBy:null, referrals:['AC-005'], avatar:'av-gold', password:'1234', joinDate:'2026-02-01' },
+  { id:'AC-004', name:'Sumaiya Islam', class:5, batch:'General', fee:1500, phone:'01745678901', guardianName:'Islam Mia', guardianPhone:'01745678902', address:'Pahartali, Ctg', paid:true, paidDate:'2026-05-03', referredBy:'AC-001', referrals:[], avatar:'av-purple', password:'1234', joinDate:'2026-02-10' },
+  { id:'AC-005', name:'Rakib Hossain', class:10, batch:'Commerce', fee:2800, phone:'01856789012', guardianName:'Hossain Mia', guardianPhone:'01856789013', address:'Bayazid, Ctg', paid:false, paidDate:null, referredBy:'AC-003', referrals:[], avatar:'av-red', password:'1234', joinDate:'2026-03-01' },
+  { id:'AC-006', name:'Nadia Begum', class:3, batch:'General', fee:1200, phone:'01967890123', guardianName:'Begum Mia', guardianPhone:'01967890124', address:'Oxygen, Ctg', paid:true, paidDate:'2026-05-01', referredBy:null, referrals:[], avatar:'av-blue', password:'1234', joinDate:'2026-03-15' }
+];
+
+var attendance = {};
+var progressData = {};
+var leads = [
+  { id:'L-001', name:'Arif Ahmed', phone:'01711111111', interestedClass:'8', source:'Facebook', status:'new', note:'SSC Science-এ আগ্রহী', date:'2026-05-05' },
+  { id:'L-002', name:'Sadia Akter', phone:'01722222222', interestedClass:'6', source:'Referral', status:'contacted', note:'General batch জানতে চেয়েছে', date:'2026-05-07' },
+  { id:'L-003', name:'Mizan Rahman', phone:'01733333333', interestedClass:'10', source:'Walk-in', status:'admitted', note:'Commerce batch, admit হয়েছে', date:'2026-05-08' }
+];
+
+var currentUser = null;
+var currentUserType = null;
+var currentQ = 0;
+var answered = false;
+
+var weeklyRoutine = [
+  { day:'শনিবার', isToday:false, slots:[
+    { time:'৩:০০ PM', subject:'গণিত', topic:'বীজগণিত - সমীকরণ', batch:'class1' },
+    { time:'৪:৩০ PM', subject:'ইংরেজি', topic:'Grammar - Tense', batch:'class1' },
+    { time:'৬:০০ PM', subject:'বিজ্ঞান', topic:'Physics - Motion', batch:'ssc' }
+  ]},
+  { day:'রবিবার', isToday:false, slots:[
+    { time:'৩:০০ PM', subject:'গণিত', topic:'SSC - Trigonometry', batch:'ssc' },
+    { time:'৫:০০ PM', subject:'হিসাববিজ্ঞান', topic:'Journal Entry', batch:'commerce' },
+    { time:'৬:৩০ PM', subject:'বাংলা', topic:'রচনা ও ব্যাকরণ', batch:'class1' }
+  ]},
+  { day:'সোমবার', isToday:false, slots:[
+    { time:'৩:০০ PM', subject:'বিজ্ঞান', topic:'Chemistry - Periodic Table', batch:'ssc' },
+    { time:'৫:০০ PM', subject:'গণিত', topic:'Class 5-7 পাটীগণিত', batch:'class1' },
+    { time:'৭:০০ PM', subject:'ব্যবসায় শিক্ষা', topic:'Management', batch:'commerce' }
+  ]},
+  { day:'মঙ্গলবার', isToday:true, slots:[
+    { time:'৩:০০ PM', subject:'ইংরেজি', topic:'SSC Reading & Writing', batch:'ssc' },
+    { time:'৫:০০ PM', subject:'গণিত', topic:'Geometry - Triangle', batch:'class1' },
+    { time:'৬:৩০ PM', subject:'হিসাববিজ্ঞান', topic:'Ledger & Trial Balance', batch:'commerce' }
+  ]},
+  { day:'বুধবার', isToday:false, slots:[
+    { time:'৩:০০ PM', subject:'Physics', topic:'Electricity - Current', batch:'ssc' },
+    { time:'৫:০০ PM', subject:'গণিত', topic:'Statistics', batch:'ssc' },
+    { time:'৭:০০ PM', subject:'English', topic:'Commerce English', batch:'commerce' }
+  ]},
+  { day:'বৃহস্পতিবার', isToday:false, slots:[
+    { time:'৩:০০ PM', subject:'বিজ্ঞান', topic:'Biology - Cell', batch:'ssc' },
+    { time:'৫:০০ PM', subject:'সাধারণ বিজ্ঞান', topic:'Class 4-7 বিজ্ঞান', batch:'class1' },
+    { time:'৬:৩০ PM', subject:'গণিত', topic:'Business Math', batch:'commerce' }
+  ]}
+];
+
+var quizData = [
+  { q:'পানির রাসায়নিক সূত্র কোনটি?', options:['CO₂','H₂O','NaCl','O₂'], ans:1 },
+  { q:'বাংলাদেশের রাজধানী কোনটি?', options:['চট্টগ্রাম','খুলনা','ঢাকা','সিলেট'], ans:2 },
+  { q:'২ × ৩ + ৪ = ?', options:['১৪','১০','১২','৮'], ans:1 },
+  { q:'সূর্য কোন দিকে ওঠে?', options:['পশ্চিম','উত্তর','দক্ষিণ','পূর্ব'], ans:3 },
+  { q:'Photosynthesis-এ কোন গ্যাস ব্যবহৃত হয়?', options:['O₂','CO₂','N₂','H₂'], ans:1 }
+];
+
+// ===== UTILITY =====
+function todayStr() {
+  return new Date().toISOString().slice(0,10);
+}
+function formatDate(str) {
+  if (!str) return '—';
+  var d = new Date(str);
+  return d.toLocaleDateString('bn-BD', { day:'numeric', month:'long', year:'numeric' });
+}
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+  var t = document.getElementById(id);
+  if (t) { t.classList.add('active'); window.scrollTo(0,0); }
+}
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 2500);
+}
+function el(id) { return document.getElementById(id); }
+function setEl(id, val) { var e = el(id); if(e) e.textContent = val; }
+
+// ===== LOGIN =====
+function switchLoginTab(type) {
+  var tabs = ['admin','student','parent'];
+  tabs.forEach(function(t) {
+    var loginEl = el(t + 'Login');
+    if (loginEl) loginEl.style.display = 'none';
+  });
+  document.querySelectorAll('.login-tab').forEach(function(e, i) {
+    e.classList.toggle('active', tabs[i] === type);
+  });
+  var target = el(type + 'Login');
+  if (target) target.style.display = 'block';
+}
+
+function login(type) {
+  if (type === 'admin') {
+    var u = el('adminUser').value;
+    var p = el('adminPass').value;
+    if (u === 'admin' && p === '1234') {
+      currentUserType = 'admin';
+      renderAdminDash();
+      showScreen('adminDash');
+      showToast('Welcome, Ashraf Sir! 👋');
+    } else { showToast('Wrong credentials! ❌'); }
+
+  } else if (type === 'student') {
+    var id = el('stuId').value.toUpperCase().trim();
+    var pass = el('stuPass').value;
+    var stu = students.find(function(s) { return s.id === id && s.password === pass; });
+    if (stu) {
+      currentUser = stu;
+      currentUserType = 'student';
+      setupStudentDash(stu);
+      showScreen('studentDash');
+      showToast('Welcome, ' + stu.name.split(' ')[0] + '! 🎓');
+    } else { showToast('Wrong ID or password! ❌'); }
+
+  } else if (type === 'parent') {
+    var pid = el('parId').value.toUpperCase().trim();
+    var phone = el('parPhone').value.trim();
+    var pstu = students.find(function(s) { return s.id === pid && s.guardianPhone === phone; });
+    if (pstu) {
+      currentUser = pstu;
+      currentUserType = 'parent';
+      setupParentDash(pstu);
+      showScreen('parentDash');
+      showToast('Welcome! ' + pstu.guardianName + ' 👋');
+    } else { showToast('ID বা নম্বর মিলছে না! ❌'); }
+  }
+}
+
+function logout() {
+  currentUser = null;
+  currentUserType = null;
+  showScreen('loginScreen');
+  showToast('Logged out');
+}
+
+// ===== ADMIN DASHBOARD =====
+function renderAdminDash() {
+  var todayAtt = attendance[todayStr()] || {};
+  var presentCnt = Object.values(todayAtt).filter(function(v) { return v === 'present'; }).length;
+  var income = students.filter(function(s) { return s.paid; }).reduce(function(a,b) { return a+b.fee; }, 0);
+  var dueAmt = students.filter(function(s) { return !s.paid; }).reduce(function(a,b) { return a+b.fee; }, 0);
+
+  setEl('totalStudents', students.length);
+  setEl('dueCnt', students.filter(function(s) { return !s.paid; }).length);
+  setEl('todayPresentCnt', presentCnt);
+  setEl('dashIncome', '৳' + income.toLocaleString());
+  setEl('dashDue', '৳' + dueAmt.toLocaleString());
+
+  renderStudentsList(students);
+  renderPayments();
+  renderRoutine('all');
+  renderReferrals();
+  renderAttendanceAdmin(todayStr());
+  renderLeads('all');
+  renderReminder('due');
+}
+
+// ===== STUDENTS LIST =====
+function renderStudentsList(list) {
+  var c = el('studentsList');
+  if (!c) return;
+  if (!list.length) { c.innerHTML = '<div style="padding:30px;text-align:center;color:var(--text-muted)">কোনো student নেই</div>'; return; }
+  c.innerHTML = list.map(function(s) {
+    return '<div class="student-card grade-' + s.class + '" onclick="showStudentDetail(\'' + s.id + '\')">' +
+      '<div class="student-avatar ' + s.avatar + '">' + s.name.charAt(0) + '</div>' +
+      '<div class="student-info">' +
+        '<div class="student-name">' + s.name + '</div>' +
+        '<div class="student-meta">Class ' + s.class + ' · ' + s.batch + '</div>' +
+        '<span class="payment-status ' + (s.paid ? 'paid' : 'due') + '">' + (s.paid ? '✅ Paid' : '⚠️ DUE') + '</span>' +
+      '</div>' +
+      '<div>' +
+        '<div class="student-id-badge">' + s.id + '</div>' +
+        '<div style="font-family:Rajdhani,sans-serif;font-size:14px;font-weight:700;color:var(--accent-gold);text-align:right;margin-top:6px">৳' + s.fee + '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function filterStudents(q) {
+  var filtered = students.filter(function(s) {
+    return s.name.toLowerCase().includes(q.toLowerCase()) || s.id.toLowerCase().includes(q.toLowerCase());
+  });
+  renderStudentsList(filtered);
+}
+
+function filterByClass(elem, val) {
+  document.querySelectorAll('#studentsScreen .filter-tab').forEach(function(t) { t.classList.remove('active'); });
+  elem.classList.add('active');
+  if (val === 'all') { renderStudentsList(students); return; }
+  var ranges = { '1':[1,3], '4':[4,5], '6':[6,7], '8':[8,10] };
+  var r = ranges[val];
+  renderStudentsList(students.filter(function(s) { return s.class >= r[0] && s.class <= r[1]; }));
+}
+
+// ===== STUDENT DETAIL =====
+function showStudentDetail(id) {
+  var s = students.find(function(st) { return st.id === id; });
+  if (!s) return;
+  var todayAtt = (attendance[todayStr()] || {})[s.id] || 'absent';
+  var myProgress = progressData[s.id] || [];
+
+  var attColor = todayAtt === 'present' ? 'var(--accent-green)' : todayAtt === 'late' ? '#ff8c00' : 'var(--accent-red)';
+  var attLabel = todayAtt === 'present' ? '✅ আজ Present' : todayAtt === 'late' ? '🕐 আজ Late' : '❌ আজ Absent';
+
+  var html = '<div class="detail-header">' +
+    '<div class="detail-avatar ' + s.avatar + '" style="font-size:28px;font-weight:700;width:70px;height:70px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;border:2px solid">' + s.name.charAt(0) + '</div>' +
+    '<div class="detail-name">' + s.name + '</div>' +
+    '<div class="detail-id">' + s.id + ' · ' + s.batch + '</div>' +
+    '<div style="margin-top:8px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">' +
+      '<span class="payment-status ' + (s.paid ? 'paid' : 'due') + '">' + (s.paid ? '✅ PAID' : '⚠️ DUE') + '</span>' +
+      '<span style="font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;background:rgba(0,0,0,0.3);color:' + attColor + '">' + attLabel + '</span>' +
+    '</div>' +
+  '</div>' +
+
+  '<div class="info-grid">' +
+    '<div class="info-item"><div class="info-label">CLASS</div><div class="info-value">Class ' + s.class + '</div></div>' +
+    '<div class="info-item"><div class="info-label">BATCH</div><div class="info-value">' + s.batch + '</div></div>' +
+    '<div class="info-item"><div class="info-label">MONTHLY FEE</div><div class="info-value" style="color:var(--accent-gold)">৳' + s.fee + '</div></div>' +
+    '<div class="info-item"><div class="info-label">REFERRALS</div><div class="info-value" style="color:var(--accent-purple)">' + s.referrals.length + ' জন</div></div>' +
+    '<div class="info-item full"><div class="info-label">PHONE</div><div class="info-value">' + s.phone + '</div></div>' +
+    '<div class="info-item full"><div class="info-label">GUARDIAN — ' + s.guardianName + '</div><div class="info-value">' + s.guardianPhone + '</div></div>' +
+    '<div class="info-item full"><div class="info-label">ADDRESS</div><div class="info-value">' + s.address + '</div></div>' +
+    (s.referredBy ? '<div class="info-item full"><div class="info-label">REFERRED BY</div><div class="info-value" style="color:var(--accent-purple)">' + s.referredBy + '</div></div>' : '') +
+  '</div>' +
+
+  '<div class="section-header"><span class="section-title">📋 আজকের Attendance</span></div>' +
+  '<div style="padding:0 16px 12px;display:flex;gap:8px">' +
+    '<button class="btn-primary btn-green btn-sm" onclick="markAttendance(\'' + s.id + '\',\'present\')">✅ Present</button>' +
+    '<button class="btn-primary btn-sm" style="background:linear-gradient(135deg,#ff8c00,#cc5500)" onclick="markAttendance(\'' + s.id + '\',\'late\')">🕐 Late</button>' +
+    '<button class="btn-primary btn-red btn-sm" onclick="markAttendance(\'' + s.id + '\',\'absent\')">❌ Absent</button>' +
+  '</div>' +
+
+  '<div class="section-header"><span class="section-title">💳 PAYMENT</span></div>' +
+  '<div style="padding:0 16px 8px;display:flex;gap:8px">' +
+    '<button class="btn-primary btn-green btn-sm" onclick="markPaid(\'' + s.id + '\')">✅ Mark Paid</button>' +
+    '<button class="btn-primary btn-sm" style="background:linear-gradient(135deg,#1a3050,#0d2040)" onclick="showReceipt(\'' + s.id + '\')">🧾 Receipt</button>' +
+  '</div>' +
+  buildPaymentHistory(s) +
+
+  '<div class="section-header"><span class="section-title">📊 PROGRESS — Result Add</span></div>' +
+  '<div style="padding:0 16px 12px">' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">' +
+      '<div class="form-group" style="margin:0"><label>বিষয়</label><input id="dp_sub" placeholder="গণিত" style="width:100%;background:#060e18;border:1px solid #1a3050;border-radius:8px;padding:9px;color:#e8f4ff;font-size:13px;outline:none"></div>' +
+      '<div class="form-group" style="margin:0"><label>Test নাম</label><input id="dp_test" placeholder="Test 1" style="width:100%;background:#060e18;border:1px solid #1a3050;border-radius:8px;padding:9px;color:#e8f4ff;font-size:13px;outline:none"></div>' +
+      '<div class="form-group" style="margin:0"><label>প্রাপ্ত নম্বর</label><input id="dp_marks" type="number" placeholder="45" style="width:100%;background:#060e18;border:1px solid #1a3050;border-radius:8px;padding:9px;color:#e8f4ff;font-size:13px;outline:none"></div>' +
+      '<div class="form-group" style="margin:0"><label>মোট নম্বর</label><input id="dp_total" type="number" placeholder="100" style="width:100%;background:#060e18;border:1px solid #1a3050;border-radius:8px;padding:9px;color:#e8f4ff;font-size:13px;outline:none"></div>' +
+      '<div class="form-group" style="margin:0;grid-column:1/-1"><label>মন্তব্য</label><input id="dp_note" placeholder="ভালো করেছে" style="width:100%;background:#060e18;border:1px solid #1a3050;border-radius:8px;padding:9px;color:#e8f4ff;font-size:13px;outline:none"></div>' +
+    '</div>' +
+    '<button class="btn-primary btn-sm" style="background:linear-gradient(135deg,#b44fff,#6600cc)" onclick="addProgress(\'' + s.id + '\')">📊 Add Result</button>' +
+  '</div>' +
+  '<div id="progressList_' + s.id + '">' + renderProgressRows(s.id) + '</div>' +
+  '<div style="padding:0 16px 16px;display:flex;gap:8px">' +
+    '<button class="btn-primary btn-red btn-sm" onclick="deleteStudent(\'' + s.id + '\')">🗑️ Delete Student</button>' +
+  '</div>' +
+  '<div style="height:20px"></div>';
+
+  el('studentDetailContent').innerHTML = html;
+  showScreen('studentDetail');
+}
+
+function buildPaymentHistory(s) {
+  var months = ['May 2026','April 2026','March 2026'];
+  return months.map(function(m, i) {
+    return '<div class="payment-row">' +
+      '<div><div class="payment-month">' + m + '</div><div class="payment-date">' + (i===0 ? (s.paid ? 'Paid · ' + formatDate(s.paidDate) : 'Not paid') : 'Paid') + '</div></div>' +
+      '<div><div class="payment-amount">৳' + s.fee + '</div><span class="payment-status ' + (i===0 ? (s.paid?'paid':'due') : 'paid') + '" style="float:right">' + (i===0 ? (s.paid?'✅':'⚠️') : '✅') + '</span></div>' +
+    '</div>';
+  }).join('');
+}
+
+function markPaid(id) {
+  var s = students.find(function(st) { return st.id === id; });
+  s.paid = true; s.paidDate = todayStr();
+  saveData(); renderPayments(); showStudentDetail(id);
+  showToast('Payment marked! ✅');
+}
+
+function deleteStudent(id) {
+  if (!confirm(id + ' কে delete করবেন?')) return;
+  students = students.filter(function(s) { return s.id !== id; });
+  saveData(); renderStudentsList(students); renderPayments();
+  showScreen('studentsScreen');
+  showToast('Student deleted ✅');
+}
+
+// ===== PAYMENTS =====
+function renderPayments() {
+  var paidEl = el('paymentList');
+  var dueEl = el('dueList');
+  var incEl = el('totalIncome');
+  var dueAmEl = el('totalDueAmount');
+  if (!paidEl || !dueEl) return;
+
+  var paidS = students.filter(function(s) { return s.paid; });
+  var dueS = students.filter(function(s) { return !s.paid; });
+  var income = paidS.reduce(function(a,b) { return a+b.fee; }, 0);
+  var dueAmt = dueS.reduce(function(a,b) { return a+b.fee; }, 0);
+
+  if (incEl) incEl.textContent = '৳' + income.toLocaleString();
+  if (dueAmEl) dueAmEl.textContent = '৳' + dueAmt.toLocaleString();
+
+  paidEl.innerHTML = paidS.map(function(s) {
+    return '<div class="payment-row">' +
+      '<div style="display:flex;align-items:center;gap:10px;flex:1;cursor:pointer" onclick="showStudentDetail(\'' + s.id + '\')">' +
+        '<div class="student-avatar ' + s.avatar + '" style="width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px">' + s.name.charAt(0) + '</div>' +
+        '<div><div class="payment-month">' + s.name + '</div><div class="payment-date">' + s.id + ' · ' + formatDate(s.paidDate) + '</div></div>' +
+      '</div>' +
+      '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">' +
+        '<div class="payment-amount">৳' + s.fee + '</div>' +
+        '<button onclick="showReceipt(\'' + s.id + '\')" style="padding:4px 10px;background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.3);border-radius:6px;color:var(--accent-gold);font-size:11px;font-weight:700;cursor:pointer">🧾 Receipt</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+
+  dueEl.innerHTML = dueS.map(function(s) {
+    return '<div class="payment-row">' +
+      '<div style="display:flex;align-items:center;gap:10px;flex:1;cursor:pointer" onclick="showStudentDetail(\'' + s.id + '\')">' +
+        '<div class="student-avatar ' + s.avatar + '" style="width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px">' + s.name.charAt(0) + '</div>' +
+        '<div><div class="payment-month">' + s.name + '</div><div class="payment-date">' + s.id + ' · Class ' + s.class + '</div></div>' +
+      '</div>' +
+      '<div>' +
+        '<div class="payment-amount">৳' + s.fee + '</div>' +
+        '<span class="payment-status due">⚠️ DUE</span>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+// ===== RECEIPT =====
+function showReceipt(stuId) {
+  var s = students.find(function(st) { return st.id === stuId; });
+  if (!s) return;
+  var today = new Date().toLocaleDateString('bn-BD', { day:'numeric', month:'long', year:'numeric' });
+  var c = el('receiptContent');
+  c.innerHTML =
+    '<div style="padding:16px">' +
+      '<div id="receiptPrint" style="background:var(--bg-card);border:1px solid rgba(255,215,0,0.4);border-radius:16px;padding:20px;margin-bottom:16px">' +
+        '<div style="text-align:center;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:14px">' +
+          '<div style="font-size:28px;margin-bottom:6px">🎓</div>' +
+          '<div style="font-family:Rajdhani,sans-serif;font-size:20px;font-weight:700;color:var(--accent-gold);letter-spacing:1px">ASHRAF COACHING</div>' +
+          '<div style="font-size:11px;color:var(--text-muted);margin-top:3px">Smart Learning Center, Bayazid, Chittagong</div>' +
+          '<div style="font-size:11px;color:var(--text-muted)">🧾 PAYMENT RECEIPT</div>' +
+        '</div>' +
+        '<div style="display:flex;flex-direction:column;gap:10px">' +
+          '<div style="display:flex;justify-content:space-between"><span style="font-size:13px;color:var(--text-muted)">Student Name</span><span style="font-size:13px;font-weight:700">' + s.name + '</span></div>' +
+          '<div style="display:flex;justify-content:space-between"><span style="font-size:13px;color:var(--text-muted)">Coaching ID</span><span style="font-size:13px;font-weight:700;color:var(--accent-blue)">' + s.id + '</span></div>' +
+          '<div style="display:flex;justify-content:space-between"><span style="font-size:13px;color:var(--text-muted)">Class</span><span style="font-size:13px;font-weight:700">Class ' + s.class + ' · ' + s.batch + '</span></div>' +
+          '<div style="display:flex;justify-content:space-between"><span style="font-size:13px;color:var(--text-muted)">Payment Date</span><span style="font-size:13px;font-weight:700">' + (s.paid ? formatDate(s.paidDate) : today) + '</span></div>' +
+          '<div style="display:flex;justify-content:space-between"><span style="font-size:13px;color:var(--text-muted)">Month</span><span style="font-size:13px;font-weight:700">May 2026</span></div>' +
+          '<div style="height:1px;background:var(--border)"></div>' +
+          '<div style="display:flex;justify-content:space-between;align-items:center">' +
+            '<span style="font-family:Rajdhani,sans-serif;font-size:16px;font-weight:700;color:var(--text-muted)">AMOUNT PAID</span>' +
+            '<span style="font-family:Rajdhani,sans-serif;font-size:28px;font-weight:700;color:var(--accent-gold)">৳' + s.fee + '</span>' +
+          '</div>' +
+          '<div style="text-align:center;margin-top:4px"><span class="payment-status paid" style="font-size:14px">✅ PAYMENT CONFIRMED</span></div>' +
+        '</div>' +
+      '</div>' +
+      '<button class="btn-primary btn-green" onclick="printReceipt()">🖨️ Print / Save as PDF</button>' +
+    '</div>';
+  showScreen('receiptScreen');
+}
+
+function printReceipt() {
+  var content = el('receiptPrint') ? el('receiptPrint').innerHTML : '';
+  var w = window.open('','','width=420,height=600');
+  w.document.write('<html><head><title>Receipt</title><style>body{font-family:Arial,sans-serif;padding:20px;background:#050a12;color:#e8f4ff}*{box-sizing:border-box}</style></head><body>' + content + '</body></html>');
+  w.document.close();
+  setTimeout(function() { w.print(); }, 500);
+}
+
+// ===== WHATSAPP & CALL REMINDER =====
+function renderReminder(filter) {
+  var c = el('reminderList');
+  if (!c) return;
+  var list = filter === 'due' ? students.filter(function(s) { return !s.paid; }) : students;
+  if (!list.length) { c.innerHTML = '<div style="padding:30px;text-align:center;color:var(--text-muted)">কেউ নেই</div>'; return; }
+
+  c.innerHTML = list.map(function(s) {
+    var borderColor = s.paid ? 'var(--accent-green)' : 'var(--accent-red)';
+    return '<div style="background:var(--bg-card);border:1px solid var(--border);border-left:3px solid ' + borderColor + ';border-radius:12px;padding:14px;margin:0 16px 10px">' +
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">' +
+        '<div>' +
+          '<div style="font-family:Rajdhani,sans-serif;font-size:17px;font-weight:700">' + s.name + '</div>' +
+          '<div style="font-size:12px;color:var(--text-muted)">' + s.id + ' · Class ' + s.class + '</div>' +
+          '<span class="payment-status ' + (s.paid ? 'paid' : 'due') + '" style="margin-top:4px;display:inline-block">' + (s.paid ? '✅ Paid' : '⚠️ Due') + '</span>' +
+        '</div>' +
+        '<div style="font-family:Rajdhani,sans-serif;font-size:18px;font-weight:700;color:var(--accent-gold)">৳' + s.fee + '</div>' +
+      '</div>' +
+      '<div style="display:flex;gap:8px">' +
+        '<button onclick="sendWhatsApp(\'' + s.guardianPhone + '\',\'' + s.name + '\',' + s.fee + ',' + s.paid + ')" style="flex:1;padding:10px;background:linear-gradient(135deg,#25d366,#128c7e);border:none;border-radius:10px;color:white;font-size:13px;font-weight:700;cursor:pointer">💬 WhatsApp</button>' +
+        '<button onclick="callNumber(\'' + s.guardianPhone + '\')" style="flex:1;padding:10px;background:linear-gradient(135deg,#00c8ff,#0066cc);border:none;border-radius:10px;color:white;font-size:13px;font-weight:700;cursor:pointer">📞 Call</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function filterReminder(elem, val) {
+  document.querySelectorAll('#reminderScreen .filter-tab').forEach(function(t) { t.classList.remove('active'); });
+  elem.classList.add('active');
+  renderReminder(val);
+}
+
+function sendWhatsApp(phone, name, fee, paid) {
+  var msg = paid
+    ? 'আস-সালামুআলাইকুম! Ashraf Coaching থেকে জানাচ্ছি যে ' + name + '-এর এই মাসের ফি ৳' + fee + ' পরিশোধ হয়েছে। ধন্যবাদ।'
+    : 'আস-সালামুআলাইকুম! Ashraf Coaching থেকে জানাচ্ছি যে ' + name + '-এর এই মাসের ফি ৳' + fee + ' এখনো বাকি আছে। অনুগ্রহ করে দ্রুত পরিশোধ করুন। ধন্যবাদ।';
+  var cleanPhone = phone.replace(/[^0-9]/g,'');
+  var bdPhone = cleanPhone.startsWith('0') ? '88' + cleanPhone : cleanPhone;
+  window.open('https://wa.me/' + bdPhone + '?text=' + encodeURIComponent(msg), '_blank');
+}
+
+function callNumber(phone) {
+  window.open('tel:' + phone, '_self');
+}
+
+// ===== ROUTINE =====
+function renderRoutine(filter) {
+  var c = el('routineList');
+  if (!c) return;
+  c.innerHTML = weeklyRoutine.map(function(day) {
+    var slots = filter === 'all' ? day.slots : day.slots.filter(function(s) { return s.batch === filter; });
+    if (!slots.length) return '';
+    return '<div class="routine-day">' +
+      '<div class="routine-day-header">' +
+        '<div class="day-name">' + day.day + '</div>' +
+        (day.isToday ? '<span class="today-badge">আজ</span>' : '') +
+      '</div>' +
+      slots.map(function(slot) {
+        return '<div class="subject-slot">' +
+          '<div class="slot-time">' + slot.time + '</div>' +
+          '<div><div class="slot-subject">' + slot.subject + '</div><div class="slot-topic">' + slot.topic + '</div></div>' +
+        '</div>';
+      }).join('') +
+    '</div>';
+  }).join('');
+}
+
+function filterRoutine(elem, val) {
+  document.querySelectorAll('#routineScreen .filter-tab').forEach(function(t) { t.classList.remove('active'); });
+  elem.classList.add('active');
+  renderRoutine(val);
+}
+
+// ===== REFERRALS =====
+function renderReferrals() {
+  var c = el('referralList');
+  if (!c) return;
+  var referrers = students.filter(function(s) { return s.referrals.length > 0; }).sort(function(a,b) { return b.referrals.length - a.referrals.length; });
+  if (!referrers.length) { c.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-muted)">এখনো কোনো referral নেই</div>'; return; }
+  c.innerHTML = referrers.map(function(s, i) {
+    var rankColor = i===0 ? 'var(--accent-gold)' : i===1 ? '#aaa' : '#cd7f32';
+    return '<div class="payment-row">' +
+      '<div style="display:flex;align-items:center;gap:10px">' +
+        '<div style="font-family:Rajdhani,sans-serif;font-size:20px;font-weight:700;color:' + rankColor + ';width:24px">#' + (i+1) + '</div>' +
+        '<div class="student-avatar ' + s.avatar + '" style="width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px">' + s.name.charAt(0) + '</div>' +
+        '<div><div class="payment-month">' + s.name + '</div><div class="payment-date">' + s.id + '</div></div>' +
+      '</div>' +
+      '<div style="text-align:right">' +
+        '<div style="font-family:Rajdhani,sans-serif;font-size:20px;font-weight:700;color:var(--accent-purple)">' + s.referrals.length + ' জন</div>' +
+        '<div style="font-size:12px;color:var(--accent-green)">৳' + (s.referrals.length * 100) + ' discount</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function addReferral() {
+  var newId = el('newRefStudent').value.toUpperCase();
+  var refBy = el('refByStudent').value.toUpperCase();
+  var referer = students.find(function(s) { return s.id === refBy; });
+  var newStu = students.find(function(s) { return s.id === newId; });
+  if (!referer || !newStu) { showToast('Student ID পাওয়া যায়নি! ❌'); return; }
+  if (!referer.referrals.includes(newId)) {
+    referer.referrals.push(newId);
+    newStu.referredBy = refBy;
+    saveData(); renderReferrals();
+    showToast('Referral added! ৳100 discount ✅');
+  } else { showToast('Already referred! ❌'); }
+}
+
+// ===== ADD STUDENT =====
+function addStudent() {
+  var name = el('newName').value.trim();
+  var cls = parseInt(el('newClass').value);
+  var batch = el('newBatch').value;
+  var fee = parseInt(el('newFee').value) || 2000;
+  var phone = el('newPhone').value.trim();
+  var guardianName = el('newGuardianName').value.trim();
+  var guardianPhone = el('newGuardianPhone').value.trim();
+  var address = el('newAddress').value.trim();
+  var ref = el('newReferral').value.toUpperCase().trim();
+
+  if (!name) { showToast('নাম দিন! ❌'); return; }
+  if (!phone) { showToast('ফোন নম্বর দিন! ❌'); return; }
+
+  var id = 'AC-' + String(students.length + 1).padStart(3,'0');
+  var avatars = ['av-blue','av-green','av-gold','av-purple','av-red'];
+  var newStu = { id:id, name:name, class:cls, batch:batch, fee:fee, phone:phone,
+    guardianName: guardianName || 'অজানা', guardianPhone: guardianPhone || phone,
+    address: address || 'Chittagong', paid:false, paidDate:null,
+    referredBy: ref || null, referrals:[], avatar: avatars[students.length % 5],
+    password:'1234', joinDate: todayStr() };
+
+  students.push(newStu);
+  if (ref) {
+    var referer = students.find(function(s) { return s.id === ref; });
+    if (referer) referer.referrals.push(id);
+  }
+  saveData(); renderStudentsList(students); renderPayments();
+  ['newName','newFee','newPhone','newGuardianName','newGuardianPhone','newAddress','newReferral'].forEach(function(f) { var e=el(f); if(e) e.value=''; });
+  showToast(name + ' added! ID: ' + id + ' 🎉');
+  showScreen('studentsScreen');
+}
+
+// ===== ATTENDANCE =====
+function renderAttendanceAdmin(dateStr) {
+  var c = el('attendanceList');
+  if (!c) return;
+  var dateAtt = attendance[dateStr] || {};
+  var dateInput = el('attDate');
+  if (dateInput) dateInput.value = dateStr;
+
+  c.innerHTML = students.map(function(s) {
+    var status = dateAtt[s.id] || 'absent';
+    var pBg = status==='present' ? 'var(--accent-green)' : '#1a3050';
+    var pCl = status==='present' ? '#050a12' : '#5a7a9a';
+    var lBg = status==='late' ? '#ff8c00' : '#1a3050';
+    var lCl = status==='late' ? '#050a12' : '#5a7a9a';
+    var aBg = status==='absent' ? 'var(--accent-red)' : '#1a3050';
+    var aCl = status==='absent' ? 'white' : '#5a7a9a';
+    return '<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:12px;margin:0 16px 10px;display:flex;align-items:center;gap:12px">' +
+      '<div class="student-avatar ' + s.avatar + '" style="width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:17px;flex-shrink:0">' + s.name.charAt(0) + '</div>' +
+      '<div style="flex:1">' +
+        '<div style="font-family:Rajdhani,sans-serif;font-size:16px;font-weight:700">' + s.name + '</div>' +
+        '<div style="font-size:12px;color:var(--text-muted)">Class ' + s.class + ' · ' + s.id + '</div>' +
+      '</div>' +
+      '<div style="display:flex;gap:6px">' +
+        '<button onclick="setAtt(\'' + s.id + '\',\'' + dateStr + '\',\'present\')" style="padding:7px 10px;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;background:' + pBg + ';color:' + pCl + '">✅</button>' +
+        '<button onclick="setAtt(\'' + s.id + '\',\'' + dateStr + '\',\'late\')" style="padding:7px 10px;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;background:' + lBg + ';color:' + lCl + '">🕐</button>' +
+        '<button onclick="setAtt(\'' + s.id + '\',\'' + dateStr + '\',\'absent\')" style="padding:7px 10px;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;background:' + aBg + ';color:' + aCl + '">❌</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+
+  var present = Object.values(dateAtt).filter(function(v) { return v==='present'; }).length;
+  var late = Object.values(dateAtt).filter(function(v) { return v==='late'; }).length;
+  var absent = students.length - present - late;
+  var sumEl = el('attSummary');
+  if (sumEl) sumEl.innerHTML = '<span style="color:var(--accent-green)">✅ ' + present + ' Present</span> &nbsp; <span style="color:#ff8c00">🕐 ' + late + ' Late</span> &nbsp; <span style="color:var(--accent-red)">❌ ' + absent + ' Absent</span>';
+}
+
+function setAtt(stuId, dateStr, status) {
+  if (!attendance[dateStr]) attendance[dateStr] = {};
+  attendance[dateStr][stuId] = status;
+  saveData(); renderAttendanceAdmin(dateStr);
+  showToast('Attendance saved ✅');
+}
+
+function markAttendance(stuId, status) {
+  var d = todayStr();
+  if (!attendance[d]) attendance[d] = {};
+  attendance[d][stuId] = status;
+  saveData(); showStudentDetail(stuId);
+  showToast('Attendance updated ✅');
+}
+
+function changeAttDate() {
+  var val = el('attDate').value;
+  if (val) renderAttendanceAdmin(val);
+}
+
+// ===== PROGRESS =====
+function renderProgressRows(stuId) {
+  var rows = progressData[stuId] || [];
+  if (!rows.length) return '<div style="padding:0 16px 12px;font-size:13px;color:var(--text-muted)">এখনো কোনো result নেই</div>';
+  return rows.slice().reverse().map(function(r) {
+    var pct = Math.round((r.marks/r.total)*100);
+    var color = pct>=80 ? 'var(--accent-green)' : pct>=50 ? 'var(--accent-gold)' : 'var(--accent-red)';
+    return '<div class="payment-row" style="flex-direction:column;align-items:stretch;gap:8px">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center">' +
+        '<div>' +
+          '<div style="font-family:Rajdhani,sans-serif;font-size:15px;font-weight:700">' + r.subject + ' — ' + r.testName + '</div>' +
+          '<div style="font-size:12px;color:var(--text-muted)">' + formatDate(r.date) + (r.note ? ' · ' + r.note : '') + '</div>' +
+        '</div>' +
+        '<div style="text-align:right">' +
+          '<div style="font-family:Rajdhani,sans-serif;font-size:22px;font-weight:700;color:' + color + '">' + r.marks + '/' + r.total + '</div>' +
+          '<div style="font-size:12px;color:' + color + '">' + pct + '%</div>' +
+        '</div>' +
+      '</div>' +
+      '<div style="background:#1a3050;border-radius:4px;height:6px;overflow:hidden"><div style="background:' + color + ';height:100%;width:' + pct + '%;border-radius:4px"></div></div>' +
+    '</div>';
+  }).join('');
+}
+
+function addProgress(stuId) {
+  var sub = el('dp_sub').value.trim();
+  var test = el('dp_test').value.trim();
+  var marks = parseInt(el('dp_marks').value);
+  var total = parseInt(el('dp_total').value);
+  var note = el('dp_note').value.trim();
+  if (!sub || !test || isNaN(marks) || isNaN(total)) { showToast('সব তথ্য দিন! ❌'); return; }
+  if (marks > total) { showToast('প্রাপ্ত > মোট হতে পারে না! ❌'); return; }
+  if (!progressData[stuId]) progressData[stuId] = [];
+  progressData[stuId].push({ subject:sub, testName:test, marks:marks, total:total, note:note, date:todayStr() });
+  saveData();
+  var pList = el('progressList_' + stuId);
+  if (pList) pList.innerHTML = renderProgressRows(stuId);
+  ['dp_sub','dp_test','dp_marks','dp_total','dp_note'].forEach(function(id) { var e=el(id); if(e) e.value=''; });
+  showToast('Result added! 📊');
+}
+
+// ===== LEADS =====
+var leadStatusLabel = { new:'🆕 New', contacted:'📞 Contacted', followup:'🔄 Follow-up', admitted:'✅ Admitted', lost:'❌ Lost' };
+var leadStatusColor = { new:'var(--accent-blue)', contacted:'var(--accent-gold)', followup:'var(--accent-purple)', admitted:'var(--accent-green)', lost:'var(--text-muted)' };
+
+function renderLeads(filter) {
+  var c = el('leadsList');
+  if (!c) return;
+  var list = filter === 'all' ? leads : leads.filter(function(l) { return l.status === filter; });
+  list = list.slice().reverse();
+  if (!list.length) { c.innerHTML = '<div style="padding:30px;text-align:center;color:var(--text-muted)">কোনো lead নেই</div>'; return; }
+  c.innerHTML = list.map(function(l) {
+    var color = leadStatusColor[l.status] || 'var(--border)';
+    var label = leadStatusLabel[l.status] || l.status;
+    return '<div style="background:var(--bg-card);border:1px solid var(--border);border-left:3px solid ' + color + ';border-radius:12px;padding:14px;margin:0 16px 10px;cursor:pointer" onclick="showLeadDetail(\'' + l.id + '\')">' +
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start">' +
+        '<div>' +
+          '<div style="font-family:Rajdhani,sans-serif;font-size:17px;font-weight:700">' + l.name + '</div>' +
+          '<div style="font-size:12px;color:var(--text-muted);margin-top:2px">' + l.phone + ' · Class ' + l.interestedClass + ' · ' + l.source + '</div>' +
+          '<div style="font-size:12px;color:var(--text-muted);margin-top:2px">' + (l.note || '') + '</div>' +
+        '</div>' +
+        '<div style="text-align:right;flex-shrink:0">' +
+          '<div style="font-size:12px;font-weight:700;color:' + color + '">' + label + '</div>' +
+          '<div style="font-size:11px;color:var(--text-muted);margin-top:4px">' + formatDate(l.date) + '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function filterLeads(elem, val) {
+  document.querySelectorAll('#leadsScreen .filter-tab').forEach(function(t) { t.classList.remove('active'); });
+  elem.classList.add('active');
+  renderLeads(val);
+}
+
+function showLeadDetail(id) {
+  var l = leads.find(function(x) { return x.id === id; });
+  if (!l) return;
+  var overlay = el('leadModal');
+  var content = el('leadModalContent');
+  var options = Object.entries(leadStatusLabel).map(function(entry) {
+    return '<option value="' + entry[0] + '"' + (l.status===entry[0] ? ' selected' : '') + '>' + entry[1] + '</option>';
+  }).join('');
+
+  content.innerHTML =
+    '<div class="modal-handle"></div>' +
+    '<div class="modal-title">📞 ' + l.name + '</div>' +
+    '<div class="info-grid" style="margin-bottom:12px">' +
+      '<div class="info-item"><div class="info-label">PHONE</div><div class="info-value">' + l.phone + '</div></div>' +
+      '<div class="info-item"><div class="info-label">CLASS</div><div class="info-value">Class ' + l.interestedClass + '</div></div>' +
+      '<div class="info-item"><div class="info-label">SOURCE</div><div class="info-value">' + l.source + '</div></div>' +
+      '<div class="info-item"><div class="info-label">DATE</div><div class="info-value" style="font-size:13px">' + formatDate(l.date) + '</div></div>' +
+      '<div class="info-item full"><div class="info-label">NOTE</div><div class="info-value" style="font-size:14px">' + (l.note||'—') + '</div></div>' +
+    '</div>' +
+    '<div class="form-group"><label>STATUS UPDATE</label>' +
+      '<select id="leadStatusSel" style="width:100%;background:#060e18;border:1px solid #1a3050;border-radius:10px;padding:12px;color:#e8f4ff;font-size:14px;outline:none">' + options + '</select>' +
+    '</div>' +
+    '<div class="form-group"><label>NOTE</label>' +
+      '<input id="leadNoteUpd" value="' + (l.note||'') + '" style="width:100%;background:#060e18;border:1px solid #1a3050;border-radius:10px;padding:12px;color:#e8f4ff;font-size:14px;outline:none">' +
+    '</div>' +
+    '<div style="display:flex;gap:10px;margin-top:4px">' +
+      '<button class="btn-primary btn-green" onclick="updateLead(\'' + l.id + '\')">✅ Update</button>' +
+      '<button class="btn-primary btn-red btn-sm" onclick="closeLead()">বন্ধ করুন</button>' +
+    '</div>';
+  overlay.classList.add('active');
+}
+
+function updateLead(id) {
+  var l = leads.find(function(x) { return x.id === id; });
+  l.status = el('leadStatusSel').value;
+  l.note = el('leadNoteUpd').value;
+  saveData(); closeLead(); renderLeads('all');
+  showToast('Lead updated ✅');
+}
+
+function closeLead() {
+  el('leadModal').classList.remove('active');
+}
+
+function addLead() {
+  var name = el('leadName').value.trim();
+  var phone = el('leadPhone').value.trim();
+  var cls = el('leadClass').value;
+  var source = el('leadSource').value;
+  var note = el('leadNote').value.trim();
+  if (!name || !phone) { showToast('নাম ও নম্বর দিন! ❌'); return; }
+  var id = 'L-' + String(leads.length + 1).padStart(3,'0');
+  leads.push({ id:id, name:name, phone:phone, interestedClass:cls, source:source, status:'new', note:note, date:todayStr() });
+  saveData(); renderLeads('all');
+  ['leadName','leadPhone','leadNote'].forEach(function(f) { var e=el(f); if(e) e.value=''; });
+  showToast(name + ' added as lead! 📞');
+  showScreen('leadsScreen');
+}
+
+// ===== STUDENT DASHBOARD =====
+function setupStudentDash(stu) {
+  setEl('stuDashName', stu.name.split(' ')[0] + ' 📚');
+  setEl('stuIdPill', '🆔 ' + stu.id);
+  setEl('stuClassPill', '📚 Class ' + stu.class);
+  var feeEl = el('stuFeePill');
+  if (feeEl) { feeEl.textContent = stu.paid ? '✅ Paid' : '⚠️ Due'; feeEl.style.color = stu.paid ? 'var(--accent-green)' : 'var(--accent-red)'; }
+  setEl('myRefCode', stu.id);
+  var nd = el('noticeDateStu');
+  if (nd) nd.textContent = new Date().toLocaleDateString('bn-BD', {day:'numeric',month:'long',year:'numeric'});
+  renderMyRoutine(stu);
+  renderMyPayments(stu);
+  renderMyAttendance(stu);
+  renderMyProgress(stu);
+  renderMyReferralDetail(stu);
+}
+
+function renderMyRoutine(stu) {
+  var c = el('myRoutineContent');
+  if (!c) return;
+  var batchMap = { 'Science':'ssc', 'Commerce':'commerce', 'General':'class1', 'Humanities':'ssc' };
+  var myBatch = batchMap[stu.batch] || 'class1';
+  c.innerHTML = '<div style="padding:12px 16px 4px"><div style="background:linear-gradient(135deg,rgba(0,200,255,0.1),rgba(0,255,135,0.05));border:1px solid rgba(0,200,255,0.2);border-radius:12px;padding:12px;text-align:center"><div style="font-size:12px;color:var(--text-muted)">তোমার Batch</div><div style="font-family:Rajdhani,sans-serif;font-size:18px;font-weight:700;color:var(--accent-blue)">' + stu.batch + ' · Class ' + stu.class + '</div></div></div>' +
+  weeklyRoutine.map(function(day) {
+    var slots = day.slots.filter(function(s) { return s.batch === myBatch; });
+    if (!slots.length) return '';
+    return '<div class="routine-day" style="margin:10px 16px 0">' +
+      '<div class="routine-day-header"><div class="day-name">' + day.day + '</div>' + (day.isToday ? '<span class="today-badge">আজ</span>' : '') + '</div>' +
+      slots.map(function(s) { return '<div class="subject-slot"><div class="slot-time">' + s.time + '</div><div><div class="slot-subject">' + s.subject + '</div><div class="slot-topic">' + s.topic + '</div></div></div>'; }).join('') +
+    '</div>';
+  }).join('');
+}
+
+function renderMyPayments(stu) {
+  var c = el('myPaymentContent');
+  if (!c) return;
+  c.innerHTML =
+    '<div style="padding:16px">' +
+      '<div style="background:linear-gradient(135deg,#0d2040,#0d1a30);border:1px solid rgba(255,215,0,0.3);border-radius:14px;padding:16px;margin-bottom:4px">' +
+        '<div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">মাসিক ফি</div>' +
+        '<div style="font-family:Rajdhani,sans-serif;font-size:32px;font-weight:700;color:var(--accent-gold)">৳' + stu.fee + '</div>' +
+        '<span class="payment-status ' + (stu.paid?'paid':'due') + '" style="font-size:13px">' + (stu.paid?'✅ এই মাস পরিশোধ হয়েছে':'⚠️ এই মাস বাকি আছে') + '</span>' +
+      '</div>' +
+    '</div>' +
+    '<div class="section-header"><span class="section-title">💳 HISTORY</span></div>' +
+    ['May 2026','April 2026','March 2026','February 2026'].map(function(m, i) {
+      return '<div class="payment-row">' +
+        '<div><div class="payment-month">' + m + '</div><div class="payment-date">' + (i===0?(stu.paid?'Paid · '+formatDate(stu.paidDate):'Pending'):'Paid') + '</div></div>' +
+        '<div>' +
+          '<div class="payment-amount">৳' + stu.fee + '</div>' +
+          '<span class="payment-status ' + (i===0?(stu.paid?'paid':'due'):'paid') + '">' + (i===0?(stu.paid?'✅':'⚠️'):'✅') + '</span>' +
+          (i===0 && stu.paid ? '<br><button onclick="showReceipt(\'' + stu.id + '\')" style="margin-top:4px;padding:4px 10px;background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.3);border-radius:6px;color:var(--accent-gold);font-size:11px;font-weight:700;cursor:pointer">🧾 Receipt</button>' : '') +
+        '</div>' +
+      '</div>';
+    }).join('');
+}
+
+function renderMyAttendance(stu) {
+  var c = el('myAttendanceContent');
+  if (!c) return;
+  var last14 = [];
+  for (var i=13; i>=0; i--) {
+    var d = new Date(); d.setDate(d.getDate()-i);
+    last14.push(d.toISOString().slice(0,10));
+  }
+  var present = last14.filter(function(ds) { return (attendance[ds]||{})[stu.id]==='present'; }).length;
+  var late = last14.filter(function(ds) { return (attendance[ds]||{})[stu.id]==='late'; }).length;
+
+  c.innerHTML =
+    '<div style="padding:16px">' +
+      '<div style="background:linear-gradient(135deg,#0d2040,#0a1530);border:1px solid rgba(0,200,255,0.3);border-radius:14px;padding:14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center">' +
+        '<div><div style="font-size:11px;color:var(--text-muted)">Present</div><div style="font-family:Rajdhani,sans-serif;font-size:24px;font-weight:700;color:var(--accent-green)">' + present + '</div></div>' +
+        '<div><div style="font-size:11px;color:var(--text-muted)">Late</div><div style="font-family:Rajdhani,sans-serif;font-size:24px;font-weight:700;color:#ff8c00">' + late + '</div></div>' +
+        '<div><div style="font-size:11px;color:var(--text-muted)">Absent</div><div style="font-family:Rajdhani,sans-serif;font-size:24px;font-weight:700;color:var(--accent-red)">' + (14-present-late) + '</div></div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="section-header"><span class="section-title">📋 শেষ ১৪ দিন</span></div>' +
+    last14.slice().reverse().map(function(ds) {
+      var att = (attendance[ds]||{})[stu.id] || 'absent';
+      var label = att==='present' ? '✅ Present' : att==='late' ? '🕐 Late' : '❌ Absent';
+      var cls2 = att==='present' ? 'paid' : att==='late' ? 'partial' : 'due';
+      return '<div class="payment-row"><div><div class="payment-month">' + formatDate(ds) + '</div></div><span class="payment-status ' + cls2 + '">' + label + '</span></div>';
+    }).join('');
+}
+
+function renderMyProgress(stu) {
+  var c = el('myProgressContent');
+  if (!c) return;
+  var rows = progressData[stu.id] || [];
+  if (!rows.length) { c.innerHTML = '<div style="padding:40px;text-align:center;color:var(--text-muted)">এখনো কোনো result নেই</div>'; return; }
+  var bySubject = {};
+  rows.forEach(function(r) { if (!bySubject[r.subject]) bySubject[r.subject] = []; bySubject[r.subject].push(r); });
+  c.innerHTML = Object.keys(bySubject).map(function(sub) {
+    var results = bySubject[sub];
+    return '<div style="margin:0 16px 12px">' +
+      '<div style="font-family:Rajdhani,sans-serif;font-size:16px;font-weight:700;color:var(--accent-blue);padding:12px 0 6px">' + sub + '</div>' +
+      results.map(function(r, i) {
+        var pct = Math.round((r.marks/r.total)*100);
+        var prev = results[i-1];
+        var diff = prev ? Math.round((r.marks/r.total - prev.marks/prev.total)*100) : null;
+        var color = pct>=80 ? 'var(--accent-green)' : pct>=50 ? 'var(--accent-gold)' : 'var(--accent-red)';
+        return '<div class="payment-row" style="flex-direction:column;align-items:stretch;gap:8px">' +
+          '<div style="display:flex;justify-content:space-between">' +
+            '<div>' +
+              '<div style="font-size:14px;font-weight:600">' + r.testName + '</div>' +
+              '<div style="font-size:12px;color:var(--text-muted)">' + formatDate(r.date) + '</div>' +
+              (diff!==null ? '<div style="font-size:12px;color:' + (diff>=0?'var(--accent-green)':'var(--accent-red)') + '">' + (diff>=0?'▲ +'+diff:'▼ '+diff) + '% ' + (diff>=0?'উন্নতি':'কমেছে') + '</div>' : '') +
+            '</div>' +
+            '<div style="text-align:right">' +
+              '<div style="font-family:Rajdhani,sans-serif;font-size:22px;font-weight:700;color:' + color + '">' + r.marks + '/' + r.total + '</div>' +
+              '<div style="font-size:12px;color:' + color + '">' + pct + '%</div>' +
+            '</div>' +
+          '</div>' +
+          '<div style="background:#1a3050;border-radius:4px;height:6px"><div style="background:' + color + ';height:100%;width:' + pct + '%;border-radius:4px"></div></div>' +
+          (r.note ? '<div style="font-size:12px;color:var(--text-muted);font-style:italic">"' + r.note + '"</div>' : '') +
+        '</div>';
+      }).join('') +
+    '</div>';
+  }).join('');
+}
+
+function renderMyReferralDetail(stu) {
+  var e2 = el('myReferralDetail');
+  if (!e2) return;
+  if (!stu.referrals.length) { e2.innerHTML = '<div style="color:var(--text-muted)">এখনো কোনো referral নেই।</div>'; return; }
+  var saving = stu.referrals.length * 100;
+  e2.innerHTML =
+    '<div style="display:flex;justify-content:space-between;margin-bottom:10px"><span>মোট referred</span><span style="font-family:Rajdhani,sans-serif;font-size:18px;font-weight:700;color:var(--accent-purple)">' + stu.referrals.length + ' জন</span></div>' +
+    '<div style="display:flex;justify-content:space-between"><span>মাসিক discount</span><span style="font-family:Rajdhani,sans-serif;font-size:18px;font-weight:700;color:var(--accent-green)">৳' + saving + '</span></div>' +
+    '<div style="margin-top:10px;border-top:1px solid var(--border);padding-top:10px">' +
+    stu.referrals.map(function(id2) {
+      var ref = students.find(function(s) { return s.id === id2; });
+      return '<div style="font-size:13px;color:var(--text-primary);padding:3px 0">• ' + (ref ? ref.name : id2) + ' (' + id2 + ')</div>';
+    }).join('') + '</div>';
+}
+
+function copyRefCode() {
+  var code = el('myRefCode') ? el('myRefCode').textContent : '';
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(code).then(function() { showToast('Code copied! 📋'); });
+  } else { showToast('Code: ' + code + ' 📋'); }
+}
+
+// ===== PARENT DASHBOARD =====
+function setupParentDash(stu) {
+  setEl('parDashName', stu.guardianName);
+  var pid = el('parStudentId');
+  if (pid) pid.textContent = '🆔 ' + stu.id;
+  renderParentView(stu);
+}
+
+function renderParentView(stu) {
+  var c = el('parentDashContent');
+  if (!c) return;
+  var myAtt = (attendance[todayStr()]||{})[stu.id] || 'absent';
+  var myProgress = progressData[stu.id] || [];
+  var lastTest = myProgress.length ? myProgress[myProgress.length-1] : null;
+  var attColor = myAtt==='present' ? 'var(--accent-green)' : myAtt==='late' ? '#ff8c00' : 'var(--accent-red)';
+  var attIcon = myAtt==='present' ? '✅' : myAtt==='late' ? '🕐' : '❌';
+
+  var last7 = [];
+  for (var i=0; i<7; i++) { var d2 = new Date(); d2.setDate(d2.getDate()-i); last7.push(d2.toISOString().slice(0,10)); }
+
+  c.innerHTML =
+    '<div style="background:linear-gradient(135deg,#0a1520,#0d2040);border:1px solid var(--border);border-radius:16px;padding:16px;margin:16px">' +
+      '<div style="display:flex;align-items:center;gap:12px">' +
+        '<div class="student-avatar ' + stu.avatar + '" style="width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700">' + stu.name.charAt(0) + '</div>' +
+        '<div><div style="font-family:Rajdhani,sans-serif;font-size:20px;font-weight:700">' + stu.name + '</div><div style="font-size:13px;color:var(--text-muted)">Class ' + stu.class + ' · ' + stu.batch + ' · ' + stu.id + '</div></div>' +
+      '</div>' +
+      '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:14px;text-align:center">' +
+        '<div style="background:rgba(0,0,0,0.3);border-radius:10px;padding:10px"><div style="font-size:11px;color:var(--text-muted)">আজ</div><div style="font-size:20px;color:' + attColor + '">' + attIcon + '</div></div>' +
+        '<div style="background:rgba(0,0,0,0.3);border-radius:10px;padding:10px"><div style="font-size:11px;color:var(--text-muted)">ফি</div><div style="font-size:20px;color:' + (stu.paid?'var(--accent-green)':'var(--accent-red)') + '">' + (stu.paid?'✅':'⚠️') + '</div></div>' +
+        '<div style="background:rgba(0,0,0,0.3);border-radius:10px;padding:10px"><div style="font-size:11px;color:var(--text-muted)">শেষ Test</div><div style="font-family:Rajdhani,sans-serif;font-size:16px;font-weight:700;color:var(--accent-gold)">' + (lastTest ? lastTest.marks+'/'+lastTest.total : '—') + '</div></div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="section-header"><span class="section-title">📋 শেষ ৭ দিন</span></div>' +
+    last7.map(function(ds) {
+      var att2 = (attendance[ds]||{})[stu.id] || 'absent';
+      return '<div class="payment-row"><div><div class="payment-month">' + formatDate(ds) + '</div></div><span class="payment-status ' + (att2==='present'?'paid':att2==='late'?'partial':'due') + '">' + (att2==='present'?'✅ Present':att2==='late'?'🕐 Late':'❌ Absent') + '</span></div>';
+    }).join('') +
+    '<div class="section-header" style="margin-top:8px"><span class="section-title">📊 সাম্প্রতিক Results</span></div>' +
+    (myProgress.length ? myProgress.slice(-5).reverse().map(function(r) {
+      var pct = Math.round((r.marks/r.total)*100);
+      var color = pct>=80?'var(--accent-green)':pct>=50?'var(--accent-gold)':'var(--accent-red)';
+      return '<div class="payment-row"><div><div class="payment-month">' + r.subject + ' — ' + r.testName + '</div><div class="payment-date">' + formatDate(r.date) + '</div></div><div style="text-align:right"><div style="font-family:Rajdhani,sans-serif;font-size:20px;font-weight:700;color:' + color + '">' + r.marks + '/' + r.total + '</div><div style="font-size:12px;color:' + color + '">' + pct + '%</div></div></div>';
+    }).join('') : '<div style="padding:16px;color:var(--text-muted);text-align:center">এখনো result নেই</div>') +
+    '<div style="height:20px"></div>';
+}
+
+// ===== QUIZ =====
+function loadQuiz() {
+  var q = quizData[currentQ];
+  var qEl = el('quizQuestion');
+  var resEl = el('quizResult');
+  var numEl = el('quizNum');
+  if (qEl) qEl.textContent = q.q;
+  if (resEl) resEl.style.display = 'none';
+  if (numEl) numEl.textContent = 'প্রশ্ন ' + (currentQ+1) + ' / ' + quizData.length;
+  answered = false;
+  var opts = el('quizOptions');
+  if (opts) opts.innerHTML = q.options.map(function(o, i) {
+    return '<div class="quiz-option" onclick="answerQuiz(' + i + ',this)">' + String.fromCharCode(65+i) + ') ' + o + '</div>';
+  }).join('');
+}
+
+function answerQuiz(idx, elem) {
+  if (answered) return;
+  answered = true;
+  var correct = quizData[currentQ].ans;
+  document.querySelectorAll('.quiz-option').forEach(function(opt, i) {
+    if (i===correct) opt.classList.add('correct');
+    else if (i===idx && idx!==correct) opt.classList.add('wrong');
+  });
+  if (idx===correct) {
+    showToast('সঠিক! 🎉');
+    var res = el('quizResult');
+    if (res) res.style.display = 'block';
+  } else {
+    showToast('ভুল! সঠিক: ' + quizData[currentQ].options[correct]);
+    setTimeout(nextQuestion, 1500);
+  }
+}
+
+function nextQuestion() {
+  currentQ = (currentQ+1) % quizData.length;
+  loadQuiz();
+}
+
+// ===== SERVICE WORKER =====
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('sw.js').catch(function() {});
+  });
+}
+
+
+// ============================================================
+// ===== PROGRESS CHART (Chart.js via CDN) =====
+// ============================================================
+
+function showProgressChart(stuId) {
+  var s = students.find(function(st) { return st.id === stuId; });
+  if (!s) return;
+  var rows = progressData[stuId] || [];
+  var c = el('studentDetailContent');
+  if (!rows.length) { showToast('এখনো কোনো result নেই'); return; }
+
+  // Group by subject
+  var bySubject = {};
+  rows.forEach(function(r) {
+    if (!bySubject[r.subject]) bySubject[r.subject] = [];
+    bySubject[r.subject].push(r);
+  });
+
+  var chartSection = el('progressChartSection_' + stuId);
+  if (!chartSection) return;
+
+  var colors = ['#00c8ff','#00ff87','#ffd700','#b44fff','#ff3b5c'];
+  var datasets = Object.keys(bySubject).map(function(sub, i) {
+    return {
+      label: sub,
+      data: bySubject[sub].map(function(r) { return Math.round((r.marks/r.total)*100); }),
+      borderColor: colors[i % colors.length],
+      backgroundColor: colors[i % colors.length] + '33',
+      fill: false,
+      tension: 0.3,
+      pointRadius: 5
+    };
+  });
+
+  var labels = rows.map(function(r) { return r.testName; });
+  var uniqueLabels = labels.filter(function(v, i, a) { return a.indexOf(v) === i; });
+
+  chartSection.innerHTML = '<canvas id="progChart_' + stuId + '" style="width:100%;max-height:220px"></canvas>';
+
+  if (window.Chart) {
+    new window.Chart(el('progChart_' + stuId), {
+      type: 'line',
+      data: { labels: uniqueLabels, datasets: datasets },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { labels: { color: '#e8f4ff', font: { size: 11 } } }
+        },
+        scales: {
+          y: {
+            min: 0, max: 100,
+            grid: { color: '#1a3050' },
+            ticks: { color: '#5a7a9a', callback: function(v) { return v + '%'; } }
+          },
+          x: {
+            grid: { color: '#1a3050' },
+            ticks: { color: '#5a7a9a' }
+          }
+        }
+      }
+    });
+  }
+}
+
+// ============================================================
+// ===== WHATSAPP BROADCAST (সবাইকে একসাথে) =====
+// ============================================================
+
+function renderBroadcast() {
+  var c = el('broadcastContent');
+  if (!c) return;
+  c.innerHTML =
+    '<div style="padding:0 16px 16px">' +
+      '<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px">' +
+        '<div style="font-family:Rajdhani,sans-serif;font-size:16px;font-weight:700;color:var(--accent-green);margin-bottom:12px">💬 সবাইকে একসাথে WhatsApp</div>' +
+        '<div class="form-group"><label>MESSAGE</label><textarea id="broadcastMsg" rows="4" placeholder="সবার জন্য বার্তা লিখুন..." style="width:100%;background:#060e18;border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text-primary);font-size:14px;outline:none;resize:none;font-family:Hind Siliguri,sans-serif"></textarea></div>' +
+        '<div class="filter-tabs" style="margin-bottom:12px">' +
+          '<div class="filter-tab active" id="bcast_all" onclick="setBcastFilter(\'all\')">সবাই</div>' +
+          '<div class="filter-tab" id="bcast_due" onclick="setBcastFilter(\'due\')">শুধু Due</div>' +
+          '<div class="filter-tab" id="bcast_paid" onclick="setBcastFilter(\'paid\')">শুধু Paid</div>' +
+        '</div>' +
+        '<button class="btn-primary btn-green" onclick="sendBroadcast()">📲 Send Broadcast</button>' +
+      '</div>' +
+      '<div style="background:linear-gradient(135deg,rgba(0,200,255,0.08),rgba(0,255,135,0.04));border:1px solid rgba(0,200,255,0.2);border-radius:12px;padding:12px;font-size:13px;color:var(--text-muted);line-height:1.7">' +
+        '💡 প্রতিটি guardian-এর জন্য আলাদা WhatsApp খুলবে।<br>সব guardians-দের নম্বরে message পাঠাবে।' +
+      '</div>' +
+    '</div>';
+}
+
+var bcastFilter = 'all';
+function setBcastFilter(f) {
+  bcastFilter = f;
+  ['all','due','paid'].forEach(function(x) {
+    var t = el('bcast_' + x);
+    if (t) t.classList.toggle('active', x === f);
+  });
+}
+
+function sendBroadcast() {
+  var msg = el('broadcastMsg') ? el('broadcastMsg').value.trim() : '';
+  if (!msg) { showToast('বার্তা লিখুন! ❌'); return; }
+
+  var list = students;
+  if (bcastFilter === 'due') list = students.filter(function(s) { return !s.paid; });
+  if (bcastFilter === 'paid') list = students.filter(function(s) { return s.paid; });
+
+  if (!list.length) { showToast('কোনো student নেই এই filter-এ'); return; }
+
+  var count = 0;
+  list.forEach(function(s, i) {
+    setTimeout(function() {
+      var finalMsg = 'আস-সালামুআলাইকুম ' + s.guardianName + '! Ashraf Coaching থেকে জানাচ্ছি:
+
+' + msg + '
+
+Student: ' + s.name + ' (' + s.id + ')';
+      var phone = s.guardianPhone.replace(/[^0-9]/g,'');
+      if (phone.startsWith('0')) phone = '88' + phone;
+      window.open('https://wa.me/' + phone + '?text=' + encodeURIComponent(finalMsg), '_blank');
+    }, i * 1500);
+    count++;
+  });
+  showToast(count + ' জনকে message পাঠানো হচ্ছে ✅');
+}
+
+// ============================================================
+// ===== ANALYTICS / INCOME CHART =====
+// ============================================================
+
+function renderAnalyticsScreen() {
+  var c = el('analyticsContent');
+  if (!c) return;
+
+  var totalInc = students.filter(function(s) { return s.paid; }).reduce(function(a,b) { return a+b.fee; }, 0);
+  var totalDue = students.filter(function(s) { return !s.paid; }).reduce(function(a,b) { return a+b.fee; }, 0);
+  var todayAtt = attendance[todayStr()] || {};
+  var presentCnt = Object.values(todayAtt).filter(function(v) { return v==='present'; }).length;
+  var lateCnt = Object.values(todayAtt).filter(function(v) { return v==='late'; }).length;
+
+  // Batch breakdown
+  var batchIncome = {};
+  students.filter(function(s){return s.paid;}).forEach(function(s) {
+    batchIncome[s.batch] = (batchIncome[s.batch] || 0) + s.fee;
+  });
+
+  c.innerHTML =
+    '<div style="padding:16px">' +
+      // Stats cards
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">' +
+        '<div style="background:linear-gradient(135deg,#0d2040,#0d1a30);border:1px solid rgba(255,215,0,0.3);border-radius:14px;padding:14px;text-align:center">' +
+          '<div style="font-size:11px;color:var(--text-muted)">এই মাসের আয়</div>' +
+          '<div style="font-family:Rajdhani,sans-serif;font-size:26px;font-weight:700;color:var(--accent-gold)">৳' + totalInc.toLocaleString() + '</div>' +
+        '</div>' +
+        '<div style="background:linear-gradient(135deg,#2a0d1a,#1a0d0d);border:1px solid rgba(255,59,92,0.3);border-radius:14px;padding:14px;text-align:center">' +
+          '<div style="font-size:11px;color:var(--text-muted)">বকেয়া</div>' +
+          '<div style="font-family:Rajdhani,sans-serif;font-size:26px;font-weight:700;color:var(--accent-red)">৳' + totalDue.toLocaleString() + '</div>' +
+        '</div>' +
+        '<div style="background:linear-gradient(135deg,#0d2a1a,#0a1a10);border:1px solid rgba(0,255,135,0.3);border-radius:14px;padding:14px;text-align:center">' +
+          '<div style="font-size:11px;color:var(--text-muted)">আজ Present</div>' +
+          '<div style="font-family:Rajdhani,sans-serif;font-size:26px;font-weight:700;color:var(--accent-green)">' + presentCnt + '</div>' +
+        '</div>' +
+        '<div style="background:linear-gradient(135deg,#0d1a2a,#0a1020);border:1px solid rgba(0,200,255,0.3);border-radius:14px;padding:14px;text-align:center">' +
+          '<div style="font-size:11px;color:var(--text-muted)">মোট Student</div>' +
+          '<div style="font-family:Rajdhani,sans-serif;font-size:26px;font-weight:700;color:var(--accent-blue)">' + students.length + '</div>' +
+        '</div>' +
+      '</div>' +
+      // Payment pie chart
+      '<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px">' +
+        '<div style="font-family:Rajdhani,sans-serif;font-size:15px;font-weight:700;color:var(--accent-blue);margin-bottom:12px">💰 Payment Status</div>' +
+        '<canvas id="paymentPieChart" style="max-height:200px"></canvas>' +
+      '</div>' +
+      // Attendance bar
+      '<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px">' +
+        '<div style="font-family:Rajdhani,sans-serif;font-size:15px;font-weight:700;color:var(--accent-blue);margin-bottom:12px">📋 আজকের Attendance</div>' +
+        '<canvas id="attBarChart" style="max-height:180px"></canvas>' +
+      '</div>' +
+      // Batch income
+      '<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:16px">' +
+        '<div style="font-family:Rajdhani,sans-serif;font-size:15px;font-weight:700;color:var(--accent-blue);margin-bottom:12px">📊 Batch অনুযায়ী আয়</div>' +
+        '<canvas id="batchChart" style="max-height:200px"></canvas>' +
+      '</div>' +
+    '</div>';
+
+  // Load charts
+  setTimeout(function() {
+    if (!window.Chart) return;
+
+    // Payment pie
+    new window.Chart(el('paymentPieChart'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Paid', 'Due'],
+        datasets: [{ data: [students.filter(function(s){return s.paid;}).length, students.filter(function(s){return !s.paid;}).length], backgroundColor: ['#00ff87','#ff3b5c'], borderWidth: 0 }]
+      },
+      options: { plugins: { legend: { labels: { color: '#e8f4ff' } } } }
+    });
+
+    // Attendance bar
+    new window.Chart(el('attBarChart'), {
+      type: 'bar',
+      data: {
+        labels: ['Present', 'Late', 'Absent'],
+        datasets: [{ data: [presentCnt, lateCnt, students.length - presentCnt - lateCnt], backgroundColor: ['#00ff87','#ff8c00','#ff3b5c'], borderRadius: 6 }]
+      },
+      options: { plugins: { legend: { display: false } }, scales: { y: { ticks: { color: '#5a7a9a' }, grid: { color: '#1a3050' } }, x: { ticks: { color: '#5a7a9a' }, grid: { color: '#1a3050' } } } }
+    });
+
+    // Batch income
+    new window.Chart(el('batchChart'), {
+      type: 'bar',
+      data: {
+        labels: Object.keys(batchIncome),
+        datasets: [{ data: Object.values(batchIncome), backgroundColor: ['#00c8ff','#00ff87','#ffd700','#b44fff'], borderRadius: 6 }]
+      },
+      options: { plugins: { legend: { display: false } }, scales: { y: { ticks: { color: '#5a7a9a', callback: function(v){return '৳'+v;} }, grid: { color: '#1a3050' } }, x: { ticks: { color: '#5a7a9a' }, grid: { color: '#1a3050' } } } }
+    });
+  }, 100);
+}
+
+// ============================================================
+// ===== NOTICE / ANNOUNCEMENT =====
+// ============================================================
+
+var notices = [
+  { id: 1, text: 'আগামীকাল SSC Science Batch-এর বিশেষ ক্লাস সকাল ৯টায়। সবাইকে নোটবুক আনতে হবে।', date: todayStr(), author: 'Ashraf Sir' }
+];
+
+function renderNotices() {
+  var c = el('noticeList');
+  if (!c) return;
+  c.innerHTML = notices.slice().reverse().map(function(n) {
+    return '<div style="background:var(--bg-card);border:1px solid var(--border);border-left:3px solid var(--accent-blue);border-radius:12px;padding:14px;margin:0 16px 10px">' +
+      '<div style="font-size:12px;color:var(--accent-blue);margin-bottom:6px">📢 ' + formatDate(n.date) + ' · ' + n.author + '</div>' +
+      '<div style="font-size:14px;line-height:1.7;color:var(--text-primary)">' + n.text + '</div>' +
+      '<div style="margin-top:8px;display:flex;gap:8px">' +
+        '<button onclick="shareNotice(' + n.id + ')"' style="padding:6px 12px;background:linear-gradient(135deg,#25d366,#128c7e);border:none;border-radius:8px;color:white;font-size:12px;font-weight:700;cursor:pointer">💬 WhatsApp Share</button>' +
+        '<button onclick="deleteNotice(' + n.id + ')" style="padding:6px 12px;background:rgba(255,59,92,0.2);border:1px solid rgba(255,59,92,0.3);border-radius:8px;color:var(--accent-red);font-size:12px;font-weight:700;cursor:pointer">🗑️ Delete</button>' +
+      '</div>' +
+    '</div>';
+  }).join('') || '<div style="padding:30px;text-align:center;color:var(--text-muted)">কোনো notice নেই</div>';
+}
+
+function addNotice() {
+  var txt = el('newNoticeText') ? el('newNoticeText').value.trim() : '';
+  if (!txt) { showToast('Notice লিখুন! ❌'); return; }
+  var id = Date.now();
+  notices.push({ id: id, text: txt, date: todayStr(), author: 'Ashraf Sir' });
+  saveData();
+  renderNotices();
+  el('newNoticeText').value = '';
+  showToast('Notice published! 📢');
+}
+
+function deleteNotice(id) {
+  notices = notices.filter(function(n) { return n.id !== id; });
+  saveData();
+  renderNotices();
+  showToast('Notice deleted');
+}
+
+function shareNotice(id) {
+  var n = notices.find(function(x) { return x.id == id; });
+  if (!n) return;
+  var msg = 'Ashraf Coaching & Smart Learning
+📢 Notice:
+
+' + n.text;
+  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+}
+
+// ============================================================
+// ===== STUDENT DELETE CONFIRMATION =====
+// ============================================================
+
+function confirmDelete(stuId) {
+  var s = students.find(function(st) { return st.id === stuId; });
+  if (!s) return;
+  var overlay = el('deleteModal');
+  var content = el('deleteModalContent');
+  content.innerHTML =
+    '<div class="modal-handle"></div>' +
+    '<div class="modal-title" style="color:var(--accent-red)">🗑️ Student Delete</div>' +
+    '<div style="text-align:center;padding:10px 0 20px">' +
+      '<div style="font-family:Rajdhani,sans-serif;font-size:20px;font-weight:700;margin-bottom:8px">' + s.name + '</div>' +
+      '<div style="font-size:13px;color:var(--text-muted);margin-bottom:16px">' + s.id + ' · Class ' + s.class + '</div>' +
+      '<div style="font-size:14px;color:var(--accent-red);margin-bottom:20px">এই student-কে permanently delete করবেন?</div>' +
+      '<div style="display:flex;gap:12px;justify-content:center">' +
+        '<button class="btn-primary btn-red" onclick="doDelete(\'' + stuId + '\')" >✅ হ্যাঁ, Delete করুন</button>' +
+        '<button class="btn-primary btn-sm" style="background:#1a3050" onclick="el('deleteModal').classList.remove('active')">বাতিল</button>' +
+      '</div>' +
+    '</div>';
+  overlay.classList.add('active');
+}
+
+function showAddNotice() {
+  el('noticeModal').classList.add('active');
+}
+
+function doDelete(stuId) {
+  students = students.filter(function(s) { return s.id !== stuId; });
+  saveData(); renderStudentsList(students); renderPayments();
+  el('deleteModal').classList.remove('active');
+  showScreen('studentsScreen');
+  showToast('Student deleted ✅');
+}
+
+// Update saveData to include notices
+var _origSave = saveData;
+saveData = function() {
+  try {
+    localStorage.setItem('ac_students', JSON.stringify(students));
+    localStorage.setItem('ac_attendance', JSON.stringify(attendance));
+    localStorage.setItem('ac_progress', JSON.stringify(progressData));
+    localStorage.setItem('ac_leads', JSON.stringify(leads));
+    localStorage.setItem('ac_notices', JSON.stringify(notices));
+  } catch(e) {}
+};
+
+var _origLoad = loadData;
+loadData = function() {
+  try {
+    var s = localStorage.getItem('ac_students');
+    var a = localStorage.getItem('ac_attendance');
+    var p = localStorage.getItem('ac_progress');
+    var l = localStorage.getItem('ac_leads');
+    var n = localStorage.getItem('ac_notices');
+    if (s) students = JSON.parse(s);
+    if (a) attendance = JSON.parse(a);
+    if (p) progressData = JSON.parse(p);
+    if (l) leads = JSON.parse(l);
+    if (n) notices = JSON.parse(n);
+  } catch(e) {}
+};
+
+// ===== INIT =====
+loadData();
+loadQuiz();
+
+</script>
+</body>
+</html>
