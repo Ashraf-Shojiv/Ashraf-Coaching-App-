@@ -63,9 +63,7 @@ window.addEventListener('appinstalled', () => {
 });
 
 // ===== DATA =====
-let students = [
-  { 
-];
+
 
 let currentUser = null;
 let currentUserType = null;
@@ -509,3 +507,10 @@ if ('serviceWorker' in navigator) {
       .catch(e => console.log('SW failed:', e));
   });
 }
+
+window.onload = function() {
+  loadQuiz();
+  loadStudents();
+}
+
+console.log("NEW VERSION LOADED");
