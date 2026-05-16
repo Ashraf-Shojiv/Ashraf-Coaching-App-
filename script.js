@@ -1,3 +1,43 @@
+// ===== SHEETDB API =====
+const SHEETDB_API = "https://sheetdb.io/api/v1/uyrf63x64rk9h";
+
+// ===== STUDENTS DATA =====
+let students = [];
+
+// Google Sheet থেকে data load
+async function loadStudents() {
+  try {
+    const response = await fetch(SHEETDB_API);
+    const data = await response.json();
+
+    students = data.map((s, index) => ({
+      id: s.ID || `AC-${String(index + 1).padStart(3, '0')}`,
+      name: s.NAME || 'No Name',
+      class: Number(s.CLASS) || 1,
+      batch: 'General',
+      fee: Number(s.FEE) || 0,
+      phone: s.PHONE || '',
+      address: s.ADDRESS || '',
+      paid: true,
+      paidDate: s.DATE || '',
+      referredBy: null,
+      referrals: [],
+      avatar: 'av-blue',
+      password: '1234'
+    }));
+
+    renderStudentsList(students);
+    renderPayments();
+
+    console.log("Students Loaded:", students);
+
+  } catch (error) {
+    console.error("SheetDB Load Error:", error);
+  }
+}
+
+
+
 let deferredPrompt;
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
@@ -24,12 +64,7 @@ window.addEventListener('appinstalled', () => {
 
 // ===== DATA =====
 let students = [
-  { id: 'AC-001', name: 'Mohammad Rahim', class: 9, batch: 'Science', fee: 2500, phone: '01712345678', address: 'Bayazid, Ctg', paid: true, paidDate: 'May 1', referredBy: null, referrals: ['AC-004'], avatar: 'av-blue', password: '1234' },
-  { id: 'AC-002', name: 'Fatema Khatun', class: 7, batch: 'General', fee: 2000, phone: '01823456789', address: 'Oxygen, Ctg', paid: true, paidDate: 'May 2', referredBy: 'AC-001', referrals: [], avatar: 'av-green', password: '1234' },
-  { id: 'AC-003', name: 'Hasan Ali', class: 10, batch: 'Science', fee: 3000, phone: '01934567890', address: 'Bayazid, Ctg', paid: false, paidDate: null, referredBy: null, referrals: ['AC-005'], avatar: 'av-gold', password: '1234' },
-  { id: 'AC-004', name: 'Sumaiya Islam', class: 5, batch: 'General', fee: 1500, phone: '01745678901', address: 'Pahartali, Ctg', paid: true, paidDate: 'May 3', referredBy: 'AC-001', referrals: [], avatar: 'av-purple', password: '1234' },
-  { id: 'AC-005', name: 'Rakib Hossain', class: 10, batch: 'Commerce', fee: 2800, phone: '01856789012', address: 'Bayazid, Ctg', paid: false, paidDate: null, referredBy: 'AC-003', referrals: [], avatar: 'av-red', password: '1234' },
-  { id: 'AC-006', name: 'Nadia Begum', class: 3, batch: 'General', fee: 1200, phone: '01967890123', address: 'Oxygen, Ctg', paid: true, paidDate: 'May 1', referredBy: null, referrals: [], avatar: 'av-blue', password: '1234' },
+  { 
 ];
 
 let currentUser = null;
@@ -427,7 +462,8 @@ function renderMyPayments(stu) {
 }
 
 // Quiz
-function loadQuiz() {
+function loadQuiz() 
+loadStudents(); {
   const q = quizData[currentQ];
   document.getElementById('quizQuestion').textContent = q.q;
   document.getElementById('quizResult').style.display = 'none';
